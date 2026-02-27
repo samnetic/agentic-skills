@@ -9,7 +9,19 @@ Production-grade reference guides with decision trees, anti-patterns, code examp
 ### One Command
 
 ```bash
-git clone https://github.com/<owner>/agentic-skills.git
+curl -sSL https://raw.githubusercontent.com/samnetic/agentic-skills/main/install.sh | bash
+```
+
+Or with options:
+
+```bash
+bash <(curl -sSL https://raw.githubusercontent.com/samnetic/agentic-skills/main/install.sh) --claude --force
+```
+
+### From a Local Clone
+
+```bash
+git clone https://github.com/samnetic/agentic-skills.git
 cd your-project && bash /path/to/agentic-skills/install.sh
 ```
 
@@ -64,7 +76,7 @@ Removes only what was installed — your custom skills and agents are untouched.
 ### Alternative: `npx skills`
 
 ```bash
-npx skills add <owner>/agentic-skills
+npx skills add samnetic/agentic-skills
 ```
 
 Installs skills only (no agents or hooks) into `.claude/skills/`.

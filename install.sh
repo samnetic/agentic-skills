@@ -9,8 +9,27 @@ set -euo pipefail
 # Run with --help for full usage information.
 # ──────────────────────────────────────────────────────────────────────────────
 
-REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 VERSION="1.0.0"
+REPO_URL="https://github.com/samnetic/agentic-skills.git"
+
+# ── Remote pipe detection ────────────────────────────────────────────────────
+# When piped via `curl ... | bash`, $0 is "bash" and there's no local repo.
+# Clone to a temp directory, re-run the script from there, then clean up.
+
+_cleanup_tmp() { [[ -n "${_TMP_CLONE:-}" ]] && rm -rf "$_TMP_CLONE"; }
+
+if [[ ! -f "$0" ]] || [[ "$(basename "$0")" == "bash" ]] || [[ "$(basename "$0")" == "sh" ]]; then
+  _TMP_CLONE="$(mktemp -d)"
+  trap _cleanup_tmp EXIT
+  echo "  Fetching agentic-skills..."
+  if ! git clone --depth 1 --quiet "$REPO_URL" "$_TMP_CLONE" 2>/dev/null; then
+    echo "  ✗ Failed to clone $REPO_URL" >&2
+    exit 1
+  fi
+  exec bash "$_TMP_CLONE/install.sh" "$@"
+fi
+
+REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # ── Color / output helpers ────────────────────────────────────────────────────
 
