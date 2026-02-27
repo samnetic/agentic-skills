@@ -317,9 +317,12 @@ install_claude() {
 
     # settings.local.json
     local settings_file="$base/settings.local.json"
-    if [[ ! -f "$settings_file" ]]; then
-      cp "$REPO_DIR/.claude/settings.local.json" "$settings_file"
+    local settings_src="$REPO_DIR/.claude/settings.local.json"
+    if [[ ! -f "$settings_file" ]] && [[ -f "$settings_src" ]]; then
+      cp "$settings_src" "$settings_file"
       info "Hook configuration written to settings.local.json"
+    elif [[ ! -f "$settings_file" ]]; then
+      warn "Source settings.local.json not found — skipped"
     elif grep -q "hooks/stop.sh" "$settings_file" 2>/dev/null; then
       warn "Hooks already present in settings.local.json — skipped"
     else
