@@ -30,9 +30,16 @@ if [[ "$VERSION" != "$cli_version" ]]; then
   exit 1
 fi
 
-if ! rg -n "^## \\[$VERSION\\]" "$ROOT_DIR/CHANGELOG.md" >/dev/null 2>&1; then
-  echo "Changelog missing entry for version $VERSION" >&2
-  exit 1
+if command -v rg >/dev/null 2>&1; then
+  if ! rg -n "^## \\[$VERSION\\]" "$ROOT_DIR/CHANGELOG.md" >/dev/null 2>&1; then
+    echo "Changelog missing entry for version $VERSION" >&2
+    exit 1
+  fi
+else
+  if ! grep -E "^## \\[$VERSION\\]" "$ROOT_DIR/CHANGELOG.md" >/dev/null 2>&1; then
+    echo "Changelog missing entry for version $VERSION" >&2
+    exit 1
+  fi
 fi
 
 echo "Release metadata verified for $TAG"

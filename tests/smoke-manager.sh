@@ -37,10 +37,18 @@ assert_contains() {
   local file="$1"
   local pattern="$2"
   local label="$3"
-  if rg -n --fixed-strings "$pattern" "$file" >/dev/null 2>&1; then
-    pass "$label"
+  if command -v rg >/dev/null 2>&1; then
+    if rg -n --fixed-strings "$pattern" "$file" >/dev/null 2>&1; then
+      pass "$label"
+    else
+      fail "$label"
+    fi
   else
-    fail "$label"
+    if grep -F -- "$pattern" "$file" >/dev/null 2>&1; then
+      pass "$label"
+    else
+      fail "$label"
+    fi
   fi
 }
 
