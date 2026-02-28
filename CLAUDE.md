@@ -1,8 +1,8 @@
-# Agentic Skills — Portable Claude Code Skill Pack
+# Agentic Skills — Portable Skill Pack
 
-This repository contains a curated set of high-quality skills and agents for Claude Code.
+This repository contains a curated set of high-quality skills and agents for Claude Code, OpenCode, Cursor, and Codex workflows.
 Skills live in `skills/` (for `npx skills add` distribution) and agents in `agents/`.
-Use `install.sh` from a target project to copy agents and hooks, or install skills via `npx skills add <owner>/agentic-skills`.
+Use `install.sh` from a target project to copy skills/agents/hooks for supported platforms, or install skills via `npx skills add <owner>/agentic-skills`.
 
 ## Repository Structure
 
@@ -11,7 +11,13 @@ skills/           → 25 skill directories, each containing SKILL.md (npx distri
 agents/           → 8 agent .md files
 .claude/          → Mirror of skills + agents + hooks (for local development)
 .claude/hooks/    → 7 bash command hook scripts
-install.sh        → Installer script (copies agents + hooks to target project)
+.opencode/        → OpenCode plugin bridge source (hook compatibility)
+install.sh        → Installer script (Claude/OpenCode/Cursor/Codex targets)
+agentic-skills.sh → Unified lifecycle CLI (install/update/self-update/status/doctor/uninstall/version)
+package.json      → npm package metadata (`agentic-skills` CLI)
+bin/              → executable wrapper for npm/npx distribution
+.github/workflows/→ CI and tag-based release automation (npm + Homebrew tap update)
+scripts/          → release helpers (formula rendering, release metadata checks)
 CHANGELOG.md      → Release history
 ```
 

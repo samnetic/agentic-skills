@@ -1,0 +1,46 @@
+{
+  "name": "agentic-skills",
+  "version": "1.3.0",
+  "description": "Portable multi-agent skills toolkit for Claude Code, OpenCode, Cursor, and Codex.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samnetic/agentic-skills.git"
+  },
+  "homepage": "https://github.com/samnetic/agentic-skills#readme",
+  "bugs": {
+    "url": "https://github.com/samnetic/agentic-skills/issues"
+  },
+  "bin": {
+    "agentic-skills": "bin/agentic-skills"
+  },
+  "files": [
+    "agentic-skills.sh",
+    "install.sh",
+    "uninstall.sh",
+    "agents",
+    "skills",
+    ".claude/hooks/*.sh",
+    ".claude/settings.local.json",
+    ".opencode/plugins/agentic-skills-hooks.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "bash tests/smoke-installer.sh && bash tests/smoke-manager.sh",
+    "test:local": "bash tests/run-all.sh"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "claude",
+    "codex",
+    "opencode",
+    "skills",
+    "hooks",
+    "mcp"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}

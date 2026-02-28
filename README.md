@@ -1,6 +1,6 @@
 # Agentic Skills
 
-> 25 expert-level domain skills + 8 specialized agents for Claude Code.
+> 25 expert-level domain skills + 8 specialized agents for Claude Code, OpenCode, Cursor, and Codex.
 
 Production-grade reference guides with decision trees, anti-patterns, code examples, and checklists. Drop into any project for instant AI-assisted development expertise.
 
@@ -25,6 +25,59 @@ git clone https://github.com/samnetic/agentic-skills.git
 cd your-project && bash /path/to/agentic-skills/install.sh
 ```
 
+### Unified CLI (Recommended)
+
+Use the wrapper for a cleaner lifecycle UX (`install`, `update`, `self-update`, `status`, `doctor`, `version`, `uninstall`):
+
+```bash
+# Install (example: Claude project)
+bash /path/to/agentic-skills/agentic-skills.sh install --claude --force
+
+# Update based on existing manifest settings
+bash /path/to/agentic-skills/agentic-skills.sh update --all
+
+# Self-update from latest GitHub main, then run update
+bash /path/to/agentic-skills/agentic-skills.sh self-update --all --yes
+
+# Show what is installed
+bash /path/to/agentic-skills/agentic-skills.sh status
+
+# Validate installation integrity
+bash /path/to/agentic-skills/agentic-skills.sh doctor
+
+# Uninstall
+bash /path/to/agentic-skills/agentic-skills.sh uninstall --path .claude --force
+```
+
+### npm / npx Command
+
+If published to npm, users can run the toolkit as a command:
+
+```bash
+# One-off execution without global install
+npx agentic-skills@latest install --claude --force
+
+# Lifecycle commands
+npx agentic-skills@latest status
+npx agentic-skills@latest doctor
+npx agentic-skills@latest update --all
+npx agentic-skills@latest self-update --all --yes
+```
+
+### Homebrew (macOS/Linux)
+
+If the Homebrew tap is available:
+
+```bash
+brew tap samnetic/agentic-skills
+brew install agentic-skills
+agentic-skills version
+
+# Update / remove
+brew upgrade agentic-skills
+brew uninstall agentic-skills
+```
+
 ### Interactive Installer
 
 The installer lets you choose your platform and components:
@@ -40,8 +93,10 @@ $ bash install.sh
   Install to:
     1. Claude Code — this project
     2. Claude Code — global
-    3. Cursor — this project
-    4. Codex CLI — this project
+    3. OpenCode — this project
+    4. OpenCode — global
+    5. Cursor — this project
+    6. Codex CLI — this project
 
   Components: Skills, Agents, Hooks
 ```
@@ -54,6 +109,12 @@ bash install.sh --claude --force
 
 # Claude Code (global)
 bash install.sh --claude-global --force
+
+# OpenCode (current project, everything)
+bash install.sh --opencode --force
+
+# OpenCode (global)
+bash install.sh --opencode-global --force
 
 # Cursor
 bash install.sh --cursor --force
@@ -73,13 +134,37 @@ bash uninstall.sh
 
 Removes only what was installed — your custom skills and agents are untouched.
 
+### Test
+
+```bash
+# Installer + CLI smoke tests
+bash tests/run-all.sh
+
+# Individual suites
+bash tests/smoke-installer.sh
+bash tests/smoke-manager.sh
+bash tests/smoke-clis.sh
+```
+
+### Live CLI Verification
+
+Use these to verify each installed coding agent can access skills in this repo:
+
+```bash
+claude -p "In this repo, list directory names under ./skills only. Return exactly one line in this format: SKILLS:name1,name2,... sorted alphabetically with no spaces."
+
+codex exec "In this repo, list directory names under ./skills only. Return exactly one line in this format: SKILLS:name1,name2,... sorted alphabetically with no spaces."
+
+opencode run "In this repo, list directory names under ./skills only. Return exactly one line in this format: SKILLS:name1,name2,... sorted alphabetically with no spaces."
+```
+
 ### Alternative: `npx skills`
 
 ```bash
 npx skills add samnetic/agentic-skills
 ```
 
-Installs skills only (no agents or hooks) into `.claude/skills/`.
+Installs skills only (no agents or hooks) into `.claude/skills/` in the current project.
 
 ## Skills (25)
 
@@ -136,7 +221,7 @@ Use agents with `@agent-name` in Claude Code:
 
 ## Hooks
 
-7 deterministic bash command hooks in `.claude/hooks/` (configured via `settings.local.json`):
+Claude Code includes 7 deterministic bash command hooks in `.claude/hooks/` (configured via `settings.json` and `settings.local.json`):
 
 | Hook | Event | Purpose |
 |------|-------|---------|
@@ -147,6 +232,12 @@ Use agents with `@agent-name` in Claude Code:
 | `pre-tool-use.sh` | PreToolUse:Bash | Block rm -rf + .env access |
 | `post-tool-use.sh` | PostToolUse:Write\|Edit | Shellcheck/ruff lint warnings |
 | `post-tool-use-failure.sh` | PostToolUseFailure | Structured error logging |
+
+OpenCode uses a plugin bridge (`.opencode/plugins/agentic-skills-hooks.js`) that mirrors the highest-value safeguards:
+- Session context injection on `session.created`
+- Skill/agent reinjection on `session.compacted`
+- Bash guard for dangerous `rm -rf` and direct `.env` reads
+- Session error logging to `.opencode/hooks/logs/tool_failures.jsonl`
 
 ## How Skills Work
 
@@ -172,10 +263,29 @@ While designed for Claude Code, these skills work with any AI coding assistant t
 
 | Platform | Installer Target | What Happens |
 |----------|-----------------|-------------|
-| **Claude Code** | `--claude` or `--claude-global` | Skills → `.claude/skills/`, agents → `.claude/agents/`, hooks → `settings.local.json` |
+| **Claude Code** | `--claude` or `--claude-global` | Skills → `.claude/skills/`, agents → `.claude/agents/`, hooks → `settings.json` + `settings.local.json` |
+| **OpenCode** | `--opencode` or `--opencode-global` | Skills → `.opencode/skills/` (or `~/.config/opencode/skills/`), agents → `.opencode/agents/` (converted to OpenCode subagent format), hooks → `.opencode/plugins/agentic-skills-hooks.js` |
 | **Cursor** | `--cursor` | Each skill/agent as a rule file in `.cursor/rules/` |
 | **Codex CLI** | `--codex` | All content concatenated into `codex.md` |
 | **Any LLM** | — | Include skill content in system prompt |
+
+## Maintainer Release Automation
+
+Pushing a version tag triggers GitHub Actions to validate, publish npm, create a GitHub release, and update Homebrew formula metadata in the tap repository.
+
+```bash
+# Example
+git tag v1.3.0
+git push origin v1.3.0
+```
+
+Required repository secrets:
+- `NPM_TOKEN` for npm publish
+- `HOMEBREW_TAP_GITHUB_TOKEN` for pushing formula updates to the Homebrew tap
+
+Optional repository variables:
+- `HOMEBREW_TAP_REPO` (default: `samnetic/homebrew-agentic-skills`)
+- `HOMEBREW_TAP_BRANCH` (default: `main`)
 
 ## Works With
 

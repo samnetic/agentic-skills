@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] — 2026-02-28
+
+### Added
+
+- New unified lifecycle CLI: `agentic-skills.sh` with `install`, `update`, `self-update`, `status`, `doctor`, `uninstall`, and `version` commands.
+- `self-update` command that can fetch latest toolkit from GitHub (`--repo`/`--ref`) or from a local source path (`--source`) and then apply update flow.
+- npm distribution metadata via `package.json` and executable wrapper `bin/agentic-skills` for `npx agentic-skills@latest ...` usage.
+- New manager smoke test suite (`tests/smoke-manager.sh`) covering install/status/doctor/update/self-update/uninstall lifecycle and packaged bin wrapper behavior.
+- GitHub Actions workflows for CI (`.github/workflows/ci.yml`) and tag-based releases (`.github/workflows/release.yml`) including npm publish and Homebrew tap formula updates.
+- Release helper scripts: `scripts/verify-release-metadata.sh` and `scripts/render-homebrew-formula.sh`.
+
+### Changed
+
+- `install.sh` manifest writing now records only the components actually installed (accurate `skills`, `agents`, `hooks`, `hook_scripts`, `plugin_files`).
+- `install.sh` now supports component toggles `--no-skills`, `--no-agents`, and `--no-hooks` for precise update replay from manifest state.
+- Claude hook configuration is now installed to both `settings.json` and `settings.local.json`, ensuring hook enforcement also applies in `claude -p` default settings mode.
+- `tests/run-all.sh` now executes installer, manager, and runtime CLI smoke suites.
+- README now documents unified CLI lifecycle and npm/npx command usage.
+- Installer manifest version updated to `1.3.0`.
+
 ## [1.2.0] — 2026-02-26
 
 ### Changed

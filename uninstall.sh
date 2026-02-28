@@ -87,6 +87,8 @@ else
   # Search common locations
   find_manifest ".claude"
   find_manifest "$HOME/.claude"
+  find_manifest ".opencode"
+  find_manifest "$HOME/.config/opencode"
   find_manifest ".cursor/rules"
   find_manifest "."
 fi
@@ -159,6 +161,7 @@ TARGET_PATH="$(json_value "target_path")"
 HOOKS="$(json_value "hooks")"
 SKILLS=($(json_array "skills"))
 AGENTS=($(json_array "agents"))
+PLUGIN_FILES=($(json_array "plugin_files"))
 
 SKILL_COUNT=${#SKILLS[@]}
 AGENT_COUNT=${#AGENTS[@]}
@@ -193,7 +196,7 @@ echo ""
 skills_removed=0
 
 case "$TARGET" in
-  claude-project|claude-global)
+  claude-project|claude-global|opencode-project|opencode-global)
     for skill in "${SKILLS[@]}"; do
       skill_dir="$MANIFEST_DIR/skills/$skill"
       if [[ -d "$skill_dir" ]]; then
@@ -232,7 +235,7 @@ fi
 agents_removed=0
 
 case "$TARGET" in
-  claude-project|claude-global)
+  claude-project|claude-global|opencode-project|opencode-global)
     for agent in "${AGENTS[@]}"; do
       agent_file="$MANIFEST_DIR/agents/$agent"
       if [[ -f "$agent_file" ]]; then
@@ -263,27 +266,43 @@ fi
 # ── Remove hooks ──────────────────────────────────────────────────────────────
 
 if [[ "$HOOKS" == "true" ]]; then
-  # Remove hook scripts listed in manifest
-  hook_scripts=($(json_array "hook_scripts"))
   hooks_removed=0
-  for hs in "${hook_scripts[@]}"; do
-    hs_file="$MANIFEST_DIR/hooks/$hs"
-    if [[ -f "$hs_file" ]]; then
-      rm -f "$hs_file"
-      hooks_removed=$((hooks_removed + 1))
+  hook_scripts=($(json_array "hook_scripts"))
+
+  if [[ "$TARGET" == claude-* ]]; then
+    for hs in "${hook_scripts[@]}"; do
+      hs_file="$MANIFEST_DIR/hooks/$hs"
+      if [[ -f "$hs_file" ]]; then
+        rm -f "$hs_file"
+        hooks_removed=$((hooks_removed + 1))
+      fi
+    done
+    rm -rf "$MANIFEST_DIR/hooks/logs" "$MANIFEST_DIR/hooks/backups"
+    if [[ -d "$MANIFEST_DIR/hooks" ]] && [ -z "$(ls -A "$MANIFEST_DIR/hooks" 2>/dev/null)" ]; then
+      rmdir "$MANIFEST_DIR/hooks"
     fi
-  done
-  # Remove logs and backups directories
-  rm -rf "$MANIFEST_DIR/hooks/logs" "$MANIFEST_DIR/hooks/backups"
-  # Remove hooks/ directory if empty
-  if [[ -d "$MANIFEST_DIR/hooks" ]] && [ -z "$(ls -A "$MANIFEST_DIR/hooks" 2>/dev/null)" ]; then
-    rmdir "$MANIFEST_DIR/hooks"
+  elif [[ "$TARGET" == opencode-* ]]; then
+    for pf in "${PLUGIN_FILES[@]}"; do
+      plugin_file="$MANIFEST_DIR/plugins/$pf"
+      if [[ -f "$plugin_file" ]]; then
+        rm -f "$plugin_file"
+        hooks_removed=$((hooks_removed + 1))
+      fi
+    done
+    if [[ -d "$MANIFEST_DIR/plugins" ]] && [ -z "$(ls -A "$MANIFEST_DIR/plugins" 2>/dev/null)" ]; then
+      rmdir "$MANIFEST_DIR/plugins"
+    fi
+    rm -rf "$MANIFEST_DIR/hooks/logs"
   fi
+
   if [[ $hooks_removed -gt 0 ]]; then
-    info "$hooks_removed hook scripts removed"
+    info "$hooks_removed hook/plugin files removed"
   fi
-  warn "Hooks config in settings.local.json — review and remove manually:"
-  echo "    $MANIFEST_DIR/settings.local.json"
+  if [[ "$TARGET" == claude-* ]]; then
+    warn "Hooks config may exist in settings.json/settings.local.json — review and remove manually:"
+    echo "    $MANIFEST_DIR/settings.json"
+    echo "    $MANIFEST_DIR/settings.local.json"
+  fi
 fi
 
 # ── Remove manifest ──────────────────────────────────────────────────────────

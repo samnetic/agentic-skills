@@ -6,3 +6,4 @@ node_modules/
 !.env.example
 .claude/hooks/logs/
 .claude/hooks/backups/
+.opencode/hooks/logs/
