@@ -5,7 +5,7 @@ set -euo pipefail
 # Run shellcheck (for .sh) or ruff (for .py) after file writes.
 # Non-blocking — warnings via additionalContext only.
 # Input (stdin): JSON with tool_name, tool_input.file_path
-# Output (stdout): JSON with hookSpecificOutput.additionalContext (if warnings)
+# Output (stdout): JSON with hookSpecificOutput.hookEventName + additionalContext (if warnings)
 # Exit 0 always
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -55,7 +55,7 @@ if [[ -n "$warnings" ]]; then
   warnings="${warnings//\"/\\\"}"
   warnings="${warnings//$'\n'/\\n}"
   warnings="${warnings//$'\t'/\\t}"
-  printf '{"hookSpecificOutput":{"additionalContext":"%s"}}' "$warnings"
+  printf '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"%s"}}' "$warnings"
 fi
 
 exit 0

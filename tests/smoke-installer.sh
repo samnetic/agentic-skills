@@ -87,6 +87,22 @@ run() {
   [[ -f .claude/settings.json ]] && pass "Claude settings.json installed" || fail "Claude settings.json installed"
   [[ -f .claude/settings.local.json ]] && pass "Claude settings.local.json installed" || fail "Claude settings.local.json installed"
 
+  local ss_out
+  ss_out="$(echo '{}' | CLAUDE_PROJECT_DIR="$TMP_DIR" bash .claude/hooks/session-start.sh)"
+  if [[ "$ss_out" == *'"hookEventName":"SessionStart"'* ]]; then
+    pass "SessionStart hook emits hookEventName for schema compatibility"
+  else
+    fail "SessionStart hook emits hookEventName for schema compatibility"
+  fi
+
+  local ssc_out
+  ssc_out="$(echo '{}' | CLAUDE_PROJECT_DIR="$TMP_DIR" bash .claude/hooks/session-start-compact.sh)"
+  if [[ "$ssc_out" == *'"hookEventName":"SessionStart"'* ]]; then
+    pass "SessionStart compact hook emits hookEventName for schema compatibility"
+  else
+    fail "SessionStart compact hook emits hookEventName for schema compatibility"
+  fi
+
   local opencode_skills
   opencode_skills="$(find .opencode/skills -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
   assert_eq "$opencode_skills" "25" "OpenCode install skill count"

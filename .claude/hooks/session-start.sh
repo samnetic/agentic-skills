@@ -4,7 +4,7 @@ set -euo pipefail
 # ── SessionStart Hook ────────────────────────────────────────────────────────
 # Inject git status and context files at session start.
 # Input (stdin): JSON with session_id, source ("startup"|"resume"|"clear")
-# Output (stdout): JSON with hookSpecificOutput.additionalContext
+# Output (stdout): JSON with hookSpecificOutput.hookEventName + additionalContext
 # ──────────────────────────────────────────────────────────────────────────────
 
 INPUT="$(cat)"
@@ -44,5 +44,5 @@ context="${context//\"/\\\"}"
 context="${context//$'\n'/\\n}"
 context="${context//$'\t'/\\t}"
 
-printf '{"hookSpecificOutput":{"additionalContext":"%s"}}' "$context"
+printf '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"%s"}}' "$context"
 exit 0

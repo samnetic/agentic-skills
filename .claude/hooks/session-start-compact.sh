@@ -4,7 +4,7 @@ set -euo pipefail
 # ── SessionStart (compact) Hook ──────────────────────────────────────────────
 # Re-inject skill/agent awareness after context compaction.
 # Input (stdin): JSON with session_id, source
-# Output (stdout): JSON with hookSpecificOutput.additionalContext
+# Output (stdout): JSON with hookSpecificOutput.hookEventName + additionalContext
 # ──────────────────────────────────────────────────────────────────────────────
 
 INPUT="$(cat)"
@@ -57,5 +57,5 @@ context="${context//\"/\\\"}"
 context="${context//$'\n'/\\n}"
 context="${context//$'\t'/\\t}"
 
-printf '{"hookSpecificOutput":{"additionalContext":"%s"}}' "$context"
+printf '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"%s"}}' "$context"
 exit 0
