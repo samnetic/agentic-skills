@@ -66,7 +66,7 @@ run() {
 
   local claude_agents
   claude_agents="$(find .claude/agents -maxdepth 1 -name '*.md' -type f | wc -l | tr -d ' ')"
-  assert_eq "$claude_agents" "8" "Claude install agent count"
+  assert_eq "$claude_agents" "9" "Claude install agent count"
 
   local claude_hooks
   claude_hooks="$(find .claude/hooks -maxdepth 1 -name '*.sh' -type f | wc -l | tr -d ' ')"
@@ -81,7 +81,7 @@ run() {
 
   local opencode_agents
   opencode_agents="$(find .opencode/agents -maxdepth 1 -name '*.md' -type f | wc -l | tr -d ' ')"
-  assert_eq "$opencode_agents" "8" "OpenCode install agent count"
+  assert_eq "$opencode_agents" "9" "OpenCode install agent count"
 
   local opencode_plugins
   opencode_plugins="$(find .opencode/plugins -maxdepth 1 -name '*.js' -type f | wc -l | tr -d ' ')"
@@ -90,7 +90,7 @@ run() {
   assert_contains ".opencode/agents/software-architect.md" "mode: subagent" "OpenCode agent conversion uses subagent mode"
   assert_contains ".opencode/agents/software-architect.md" "tools:" "OpenCode agent conversion emits tool map"
 
-  assert_contains "codex.md" "25 expert-level domain skills + 8 specialized agents." "Codex output summary has corrected skill count"
+  assert_contains "codex.md" "25 expert-level domain skills + 9 specialized agents." "Codex output summary has corrected skill count"
 
   if command -v jq >/dev/null 2>&1; then
     local opencode_target
@@ -100,8 +100,26 @@ run() {
     local plugin_files_len
     plugin_files_len="$(jq -r '.plugin_files | length' .opencode/.agentic-skills.manifest)"
     assert_eq "$plugin_files_len" "1" "OpenCode manifest plugin_files"
+
+    mkdir -p merge-case/.claude
+    cat > merge-case/.claude/settings.json <<'EOF'
+{"permissions":{"allow":["Bash(echo:*)"]}}
+EOF
+    cat > merge-case/.claude/settings.local.json <<'EOF'
+{"permissions":{"allow":["Bash(ls:*)"]}}
+EOF
+
+    (
+      cd merge-case
+      bash "$ROOT_DIR/install.sh" --claude --hooks-only --force >/tmp/agentic-skills-smoke-claude-merge.log
+    )
+
+    assert_contains "merge-case/.claude/settings.json" "\"hooks\"" "Claude settings.json auto-merge adds hooks block"
+    assert_contains "merge-case/.claude/settings.json" "hooks/stop.sh" "Claude settings.json auto-merge adds stop hook"
+    assert_contains "merge-case/.claude/settings.json" "Bash(echo:*)" "Claude settings.json auto-merge preserves existing permissions"
+    assert_contains "merge-case/.claude/settings.local.json" "hooks/stop.sh" "Claude settings.local.json auto-merge adds stop hook"
   else
-    pass "jq unavailable: skipped manifest JSON assertions"
+    pass "jq unavailable: skipped manifest and settings auto-merge assertions"
   fi
 
   bash "$ROOT_DIR/uninstall.sh" --path .opencode --force >/tmp/agentic-skills-smoke-opencode-uninstall.log

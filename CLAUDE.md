@@ -8,7 +8,7 @@ Use `install.sh` from a target project to copy skills/agents/hooks for supported
 
 ```
 skills/           → 25 skill directories, each containing SKILL.md (npx distribution root)
-agents/           → 8 agent .md files
+agents/           → 9 agent .md files
 .claude/          → Mirror of skills + agents + hooks (for local development)
 .claude/hooks/    → 7 bash command hook scripts
 .opencode/        → OpenCode plugin bridge source (hook compatibility)
@@ -51,13 +51,14 @@ CHANGELOG.md      → Release history
 | `technical-writing` | 1680+ | Diátaxis, README, API docs, JSDoc/TSDoc, ADRs, changelogs, runbooks |
 | `docker-production` | 620+ | Dockerfile, compose, multi-stage builds, container security |
 
-## Available Agents (8)
+## Available Agents (9)
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
 | `software-architect` | opus | System design, architecture decisions, trade-off analysis |
 | `security-auditor` | opus | Security review, vulnerability assessment, OWASP compliance |
 | `pr-reviewer` | opus | Comprehensive code review with severity-labeled feedback |
+| `simplify` | opus | Parallel reuse/quality/efficiency review with direct cleanup fixes |
 | `db-architect` | opus | Schema design, query optimization, migration planning |
 | `devops-engineer` | sonnet | CI/CD pipelines, GitHub Actions, deployment automation |
 | `qa-engineer` | sonnet | Test strategy, test implementation, coverage analysis |

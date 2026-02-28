@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ── Agentic Skills Installer ──────────────────────────────────────────────────
-# Interactive multi-platform installer for 25 skills, 8 agents, and 7 hooks.
+# Interactive multi-platform installer for 25 skills, 9 agents, and 7 hooks.
 # Supports Claude Code (project/global), OpenCode (project/global), Cursor, and Codex CLI.
 #
 # Usage: bash install.sh [options]
@@ -11,6 +11,7 @@ set -euo pipefail
 
 VERSION="1.3.0"
 REPO_URL="https://github.com/samnetic/agentic-skills.git"
+HOOK_SETTINGS_URL="https://raw.githubusercontent.com/samnetic/agentic-skills/main/.claude/settings.local.json"
 
 # ── Remote pipe detection ────────────────────────────────────────────────────
 # When piped via `curl ... | bash`, $0 is "bash" and there's no local repo.
@@ -60,7 +61,7 @@ banner() {
   echo ""
   echo "  $(color cyan)╭──────────────────────────────────────╮$(color reset)"
   echo "  $(color cyan)│$(color reset)  $(color bold)Agentic Skills$(color reset)                      $(color cyan)│$(color reset)"
-  echo "  $(color cyan)│$(color reset)  25 skills · 8 agents · 7 hooks      $(color cyan)│$(color reset)"
+  echo "  $(color cyan)│$(color reset)  25 skills · 9 agents · 7 hooks      $(color cyan)│$(color reset)"
   echo "  $(color cyan)╰──────────────────────────────────────╯$(color reset)"
   echo ""
 }
@@ -152,6 +153,49 @@ write_opencode_agent() {
       delim >= 2 { print }
     ' "$src"
   } > "$dst"
+}
+
+merge_claude_hook_settings() {
+  local settings_file="$1"
+  local settings_src="$2"
+  local settings_name="$3"
+  local tmp
+
+  if ! command -v jq >/dev/null 2>&1; then
+    warn "$settings_name exists — auto-merge requires jq."
+    warn "Install jq or merge hooks manually from:"
+    echo "    $HOOK_SETTINGS_URL"
+    return 1
+  fi
+
+  if ! jq empty "$settings_file" >/dev/null 2>&1; then
+    warn "$settings_name exists but is not valid JSON — merge hooks manually from:"
+    echo "    $HOOK_SETTINGS_URL"
+    return 1
+  fi
+
+  tmp="$(mktemp)"
+  if jq -s '
+      .[0] as $dst
+      | .[1] as $src
+      | ($dst + {hooks: ($dst.hooks // {})})
+      | reduce (($src.hooks // {}) | keys_unsorted[]) as $event (
+          .;
+          .hooks[$event] = (
+            ((.hooks[$event] // []) + (($src.hooks[$event] // [])))
+            | unique_by(tojson)
+          )
+        )
+    ' "$settings_file" "$settings_src" > "$tmp"; then
+    mv "$tmp" "$settings_file"
+    info "Hook configuration merged into $settings_name"
+    return 0
+  fi
+
+  rm -f "$tmp"
+  warn "Failed to auto-merge hooks in $settings_name — merge manually from:"
+  echo "    $HOOK_SETTINGS_URL"
+  return 1
 }
 
 # ── Defaults ──────────────────────────────────────────────────────────────────
@@ -461,10 +505,9 @@ install_claude() {
       elif [[ ! -f "$settings_file" ]]; then
         warn "Source settings.local.json not found — skipped $settings_name"
       elif grep -q "hooks/stop.sh" "$settings_file" 2>/dev/null; then
-        warn "Hooks already present in $settings_name — skipped"
+        info "Hooks already present in $settings_name"
       else
-        warn "$settings_name exists — merge hooks manually from:"
-        echo "    $REPO_DIR/.claude/settings.local.json"
+        merge_claude_hook_settings "$settings_file" "$settings_src" "$settings_name" || true
       fi
     done
   fi
@@ -598,7 +641,7 @@ install_codex() {
   {
     echo "# Agentic Skills"
     echo ""
-    echo "> 25 expert-level domain skills + 8 specialized agents."
+    echo "> 25 expert-level domain skills + 9 specialized agents."
     echo ""
 
     # Skills

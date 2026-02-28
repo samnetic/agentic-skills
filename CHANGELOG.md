@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- New `simplify` agent for parallel code reuse, quality, and efficiency review followed by direct cleanup fixes.
+
+### Changed
+
+- Agent catalog size updated from 8 to 9 across installer output, Codex export summary, README, and smoke tests.
+- Claude installer now auto-merges hook configuration into existing `settings.json` and `settings.local.json` when `jq` is available, preserving existing keys and avoiding manual merge prompts.
+
 ## [1.3.0] — 2026-02-28
 
 ### Added

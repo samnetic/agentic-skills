@@ -1,6 +1,6 @@
 # Agentic Skills
 
-> 25 expert-level domain skills + 8 specialized agents for Claude Code, OpenCode, Cursor, and Codex.
+> 25 expert-level domain skills + 9 specialized agents for Claude Code, OpenCode, Cursor, and Codex.
 
 Production-grade reference guides with decision trees, anti-patterns, code examples, and checklists. Drop into any project for instant AI-assisted development expertise.
 
@@ -87,7 +87,7 @@ $ bash install.sh
 
   ╭──────────────────────────────────────╮
   │  Agentic Skills                      │
-  │  25 skills · 8 agents · 7 hooks      │
+  │  25 skills · 9 agents · 7 hooks      │
   ╰──────────────────────────────────────╯
 
   Install to:
@@ -196,7 +196,7 @@ Installs skills only (no agents or hooks) into `.claude/skills/` in the current 
 | `technical-writing` | 1680+ | Diátaxis, README templates, API docs, JSDoc/TSDoc, ADRs, changelogs, runbooks, onboarding |
 | `docker-production` | 620+ | Multi-stage builds, security hardening, compose patterns, container scanning |
 
-## Agents (8)
+## Agents (9)
 
 Specialized personas that combine multiple skills for focused tasks:
 
@@ -205,6 +205,7 @@ Specialized personas that combine multiple skills for focused tasks:
 | `software-architect` | opus | System design, architecture decisions, trade-off analysis |
 | `security-auditor` | opus | Security review, vulnerability assessment, OWASP compliance |
 | `pr-reviewer` | opus | Comprehensive code review with severity-labeled feedback |
+| `simplify` | opus | Reuse/quality/efficiency review in parallel, then direct cleanup fixes |
 | `db-architect` | opus | Schema design, query optimization, migration planning |
 | `devops-engineer` | sonnet | CI/CD pipelines, GitHub Actions, deployment automation |
 | `qa-engineer` | sonnet | Test strategy, test implementation, coverage analysis |
@@ -217,6 +218,7 @@ Use agents with `@agent-name` in Claude Code:
 @software-architect Design a notification system for 100k users
 @security-auditor Review this authentication module
 @pr-reviewer Review the changes in this PR
+@simplify Review and simplify my current git diff, then apply fixes
 ```
 
 ## Hooks
@@ -297,7 +299,7 @@ Agentic Skills provides **deep domain expertise and context engineering** — th
 
 **What only Agentic Skills provides:**
 - 25 production-grade skill guides with decision trees, anti-patterns, and checklists
-- 8 specialized agents (`@software-architect`, `@security-auditor`, etc.)
+- 9 specialized agents (`@software-architect`, `@security-auditor`, etc.)
 - 7 deterministic command hooks — transcript backup, context injection, lint-on-write, rm -rf guard, error logging
 
 ## Contributing
