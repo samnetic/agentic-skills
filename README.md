@@ -126,6 +126,14 @@ bash install.sh --claude --skills-only --force
 bash install.sh --dry-run
 ```
 
+### Update Global Claude Installation (One-Liner)
+
+Recommended for existing global installs. `jq` enables automatic hook-configuration merge into existing settings files.
+
+```bash
+command -v jq >/dev/null || { echo "Install jq first: brew install jq (macOS) or sudo apt-get install -y jq (Ubuntu/Debian)"; exit 1; }; curl -sSL https://raw.githubusercontent.com/samnetic/agentic-skills/main/install.sh | bash -s -- --claude-global --force
+```
+
 ### Uninstall
 
 ```bash
