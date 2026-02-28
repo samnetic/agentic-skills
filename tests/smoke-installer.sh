@@ -115,6 +115,32 @@ run() {
   opencode_plugins="$(find .opencode/plugins -maxdepth 1 -name '*.js' -type f | wc -l | tr -d ' ')"
   assert_eq "$opencode_plugins" "1" "OpenCode install plugin count"
 
+  local opencode_hook_eval
+  opencode_hook_eval="$(node --input-type=module -e '
+    const pluginPath = process.argv[1];
+    const mod = await import(pluginPath);
+    const plugin = await mod.default({
+      client: { session: { prompt: async () => {} } },
+      directory: process.cwd(),
+    });
+    const cases = [
+      { command: "cat .env", expected: "blocked" },
+      { command: "rm -rf /", expected: "blocked" },
+      { command: "cat .env.example", expected: "allowed" },
+    ];
+    for (const testCase of cases) {
+      const output = { args: { command: testCase.command } };
+      await plugin["tool.execute.before"]({ tool: "bash" }, output);
+      const blocked = String(output.args.command).includes("BLOCKED:");
+      console.log(`${testCase.command}=${blocked ? "blocked" : "allowed"}`);
+    }
+  ' "file://$TMP_DIR/.opencode/plugins/agentic-skills-hooks.js")"
+  if [[ "$opencode_hook_eval" == *"cat .env=blocked"* && "$opencode_hook_eval" == *"rm -rf /=blocked"* && "$opencode_hook_eval" == *"cat .env.example=allowed"* ]]; then
+    pass "OpenCode hook bridge blocks dangerous shell patterns"
+  else
+    fail "OpenCode hook bridge blocks dangerous shell patterns"
+  fi
+
   assert_contains ".opencode/agents/software-architect.md" "mode: subagent" "OpenCode agent conversion uses subagent mode"
   assert_contains ".opencode/agents/software-architect.md" "tools:" "OpenCode agent conversion emits tool map"
 
@@ -125,6 +151,19 @@ run() {
   local codex_agents
   codex_agents="$(find .codex/agents -maxdepth 1 -name '*.md' -type f | wc -l | tr -d ' ')"
   assert_eq "$codex_agents" "9" "Codex install agent count"
+
+  mkdir -p codex-hooks-case
+  (
+    cd codex-hooks-case
+    bash "$ROOT_DIR/install.sh" --codex --hooks-only --force >/tmp/agentic-skills-smoke-codex-hooks-only.log
+  )
+  assert_contains "/tmp/agentic-skills-smoke-codex-hooks-only.log" "Hooks are not currently supported for Codex CLI — skipped" "Codex hooks-only install warns hooks are unsupported"
+  [[ -f codex-hooks-case/.codex/.agentic-skills.manifest ]] && pass "Codex hooks-only install writes manifest" || fail "Codex hooks-only install writes manifest"
+  if command -v jq >/dev/null 2>&1; then
+    assert_eq "$(jq -r '.skills | length' codex-hooks-case/.codex/.agentic-skills.manifest)" "0" "Codex hooks-only manifest skills count"
+    assert_eq "$(jq -r '.agents | length' codex-hooks-case/.codex/.agentic-skills.manifest)" "0" "Codex hooks-only manifest agents count"
+    assert_eq "$(jq -r '.hooks' codex-hooks-case/.codex/.agentic-skills.manifest)" "false" "Codex hooks-only manifest hooks flag"
+  fi
 
   local codex_desc_len
   codex_desc_len="$(awk '

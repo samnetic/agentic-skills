@@ -713,6 +713,7 @@ install_codex_registry() {
   echo ""
   header "Installing to $base/ ..."
   echo ""
+  mkdir -p "$base"
 
   if $INSTALL_SKILLS; then
     mkdir -p "$base/skills"
