@@ -96,6 +96,8 @@ discover_manifests() {
     _add_manifest_if_present "$HOME/.claude"
     _add_manifest_if_present ".opencode"
     _add_manifest_if_present "$HOME/.config/opencode"
+    _add_manifest_if_present ".codex"
+    _add_manifest_if_present "${CODEX_HOME:-$HOME/.codex}"
     _add_manifest_if_present ".cursor/rules"
     _add_manifest_if_present "."
   fi
@@ -119,8 +121,10 @@ target_to_flag() {
     claude-global) echo "--claude-global" ;;
     opencode-project) echo "--opencode" ;;
     opencode-global) echo "--opencode-global" ;;
+    codex-project) echo "--codex" ;;
+    codex-global) echo "--codex-global" ;;
     cursor) echo "--cursor" ;;
-    codex) echo "--codex" ;;
+    codex) echo "--codex-md" ;;
     *) echo "" ;;
   esac
 }
@@ -143,6 +147,16 @@ project_workdir_from_manifest() {
       else
         echo "$(dirname "$target_path")"
       fi
+      ;;
+    codex-project)
+      if [[ "$target_path" == */.codex ]]; then
+        echo "${target_path%/.codex}"
+      else
+        echo "$(dirname "$target_path")"
+      fi
+      ;;
+    codex-global)
+      echo "$SCRIPT_DIR"
       ;;
     cursor)
       if [[ "$target_path" == */.cursor/rules ]]; then
@@ -545,7 +559,7 @@ EOF
     echo "Doctor: $m ($target)"
 
     case "$target" in
-      claude-project|claude-global|opencode-project|opencode-global)
+      claude-project|claude-global|opencode-project|opencode-global|codex-project|codex-global)
         for skill in "${skills[@]}"; do
           if [[ -f "$manifest_dir/skills/$skill/SKILL.md" ]]; then
             pass_count=$((pass_count + 1))

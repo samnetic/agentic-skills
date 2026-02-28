@@ -75,6 +75,17 @@ run() {
   check_version codex
   check_version opencode
 
+  cd "$TMP_PROJECT"
+  bash "$ROOT_DIR/install.sh" --codex --force >/tmp/agentic-skills-cli-codex-install.log
+  local codex_skill_count codex_agent_count
+  codex_skill_count="$(find .codex/skills -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
+  codex_agent_count="$(find .codex/agents -maxdepth 1 -name '*.md' -type f | wc -l | tr -d ' ')"
+  if [[ "$codex_skill_count" == "25" && "$codex_agent_count" == "9" ]]; then
+    pass "codex project install created skills/agents registry files"
+  else
+    fail "codex project install created skills/agents registry files"
+  fi
+
   local claude_agents_out
   claude_agents_out="$(mktemp)"
   local ec
@@ -108,16 +119,16 @@ run() {
 
   local codex_out
   codex_out="$(mktemp)"
-  ec="$(run_capture "cd '$ROOT_DIR' && timeout 45s codex exec 'Reply with exactly: CODEX_OK'" "$codex_out")"
+  ec="$(run_capture "cd '$TMP_PROJECT' && timeout 45s codex exec --skip-git-repo-check 'In this repo, list directory names under ./.codex/skills only. Return exactly one line in this format: SKILLS:name1,name2,... sorted alphabetically with no spaces.'" "$codex_out")"
   if rg -n "OpenAI Codex" "$codex_out" >/dev/null 2>&1; then
     pass "codex exec starts session"
-    if rg -n "CODEX_OK" "$codex_out" >/dev/null 2>&1; then
-      pass "codex exec completed model response"
-    elif rg -n "Not logged in|Reconnecting|stream disconnected|error sending request" "$codex_out" >/dev/null 2>&1; then
-      warn "codex exec hit auth/network issues after startup"
-    else
-      warn "codex exec returned without explicit completion marker"
-    fi
+  fi
+  if rg -n "SKILLS:" "$codex_out" >/dev/null 2>&1; then
+    pass "codex exec returned skill listing response"
+  elif rg -n "Not logged in|Reconnecting|stream disconnected|error sending request|Unable to connect|timed out" "$codex_out" >/dev/null 2>&1; then
+    warn "codex exec hit auth/network issues after startup"
+  elif rg -n "OpenAI Codex" "$codex_out" >/dev/null 2>&1; then
+    warn "codex exec returned without explicit completion marker"
   else
     fail "codex exec did not reach session startup"
   fi
@@ -152,6 +163,7 @@ run() {
   rm -f "$opencode_run_out"
 
   bash "$ROOT_DIR/uninstall.sh" --path .opencode --force >/tmp/agentic-skills-cli-opencode-uninstall.log
+  bash "$ROOT_DIR/uninstall.sh" --path .codex --force >/tmp/agentic-skills-cli-codex-uninstall.log
 
   echo "== cli smoke complete: pass=$pass_count warn=$warn_count fail=$fail_count =="
   [[ $fail_count -eq 0 ]]

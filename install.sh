@@ -3,7 +3,8 @@ set -euo pipefail
 
 # ── Agentic Skills Installer ──────────────────────────────────────────────────
 # Interactive multi-platform installer for 25 skills, 9 agents, and 7 hooks.
-# Supports Claude Code (project/global), OpenCode (project/global), Cursor, and Codex CLI.
+# Supports Claude Code (project/global), OpenCode (project/global), Cursor,
+# Codex skills registry (project/global), and legacy codex.md export.
 #
 # Usage: bash install.sh [options]
 # Run with --help for full usage information.
@@ -12,6 +13,7 @@ set -euo pipefail
 VERSION="1.3.0"
 REPO_URL="https://github.com/samnetic/agentic-skills.git"
 HOOK_SETTINGS_URL="https://raw.githubusercontent.com/samnetic/agentic-skills/main/.claude/settings.local.json"
+CODEX_HOME_DIR="${CODEX_HOME:-$HOME/.codex}"
 
 # ── Remote pipe detection ────────────────────────────────────────────────────
 # When piped via `curl ... | bash`, $0 is "bash" and there's no local repo.
@@ -104,6 +106,73 @@ extract_agent_description() {
     }
     END { print text }
   ' "$src"
+}
+
+extract_skill_name() {
+  local src="$1"
+  awk '
+    BEGIN { delim = 0 }
+    /^---[[:space:]]*$/ { delim++; if (delim > 1) exit; next }
+    delim == 1 && /^name:[[:space:]]*/ {
+      sub(/^name:[[:space:]]*/, "", $0)
+      print $0
+      exit
+    }
+  ' "$src"
+}
+
+extract_skill_description() {
+  local src="$1"
+  awk '
+    BEGIN { delim = 0; in_desc = 0; text = "" }
+    /^---[[:space:]]*$/ { delim++; if (delim > 1) exit; next }
+    delim == 1 {
+      if ($0 ~ /^description:[[:space:]]*>-/) { in_desc = 1; next }
+      if (in_desc == 1) {
+        if ($0 ~ /^[[:space:]]{2,}[^[:space:]].*/) {
+          gsub(/^[[:space:]]+/, "", $0)
+          text = text (text ? " " : "") $0
+          next
+        }
+        if ($0 ~ /^[a-zA-Z0-9_-]+:/) {
+          in_desc = 0
+        }
+      }
+    }
+    END { print text }
+  ' "$src"
+}
+
+write_codex_skill() {
+  local src="$1"
+  local dst="$2"
+  local fallback_name="$3"
+  local name description max_len
+  name="$(extract_skill_name "$src")"
+  description="$(extract_skill_description "$src")"
+
+  [[ -z "$name" ]] && name="$fallback_name"
+  [[ -z "$description" ]] && description="Production engineering skill for $name."
+
+  description="$(printf '%s' "$description" | tr '\n' ' ' | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//')"
+  max_len=700
+  if [[ ${#description} -gt $max_len ]]; then
+    description="${description:0:$((max_len - 3))}..."
+  fi
+
+  {
+    echo "---"
+    echo "name: $name"
+    echo "description: >-"
+    echo "  $description"
+    echo "---"
+    echo ""
+    awk '
+      BEGIN { delim = 0 }
+      /^---[[:space:]]*$/ { delim++; next }
+      delim >= 2 { print }
+    ' "$src"
+  } > "$dst"
 }
 
 write_opencode_agent() {
@@ -227,7 +296,9 @@ Targets:
   --opencode            Install to .opencode/ in current directory
   --opencode-global     Install to ~/.config/opencode/
   --cursor              Install to .cursor/rules/
-  --codex               Append to codex.md
+  --codex               Install to .codex/ in current directory
+  --codex-global        Install to $CODEX_HOME (default: ~/.codex/)
+  --codex-md            Legacy: write codex.md in current directory
 
 Components:
   --skills-only         Only install skills
@@ -253,7 +324,9 @@ while [[ $# -gt 0 ]]; do
     --opencode)      TARGET="opencode-project"; INTERACTIVE=false; shift ;;
     --opencode-global) TARGET="opencode-global"; INTERACTIVE=false; shift ;;
     --cursor)        TARGET="cursor";         INTERACTIVE=false; shift ;;
-    --codex)         TARGET="codex";          INTERACTIVE=false; shift ;;
+    --codex)         TARGET="codex-project";  INTERACTIVE=false; shift ;;
+    --codex-global)  TARGET="codex-global";   INTERACTIVE=false; shift ;;
+    --codex-md)      TARGET="codex";          INTERACTIVE=false; shift ;;
     --skills-only)   INSTALL_SKILLS=true; INSTALL_AGENTS=false; INSTALL_HOOKS=false; INTERACTIVE=false; shift ;;
     --agents-only)   INSTALL_SKILLS=false; INSTALL_AGENTS=true; INSTALL_HOOKS=false; INTERACTIVE=false; shift ;;
     --hooks-only)    INSTALL_SKILLS=false; INSTALL_AGENTS=false; INSTALL_HOOKS=true; INTERACTIVE=false; shift ;;
@@ -311,7 +384,9 @@ if $INTERACTIVE && [[ -t 0 ]]; then
   echo "    $(color bold)3.$(color reset) OpenCode — this project        $(color dim).opencode/$(color reset)"
   echo "    $(color bold)4.$(color reset) OpenCode — global              $(color dim)~/.config/opencode/$(color reset)"
   echo "    $(color bold)5.$(color reset) Cursor — this project          $(color dim).cursor/rules/$(color reset)"
-  echo "    $(color bold)6.$(color reset) Codex CLI — this project       $(color dim)codex.md$(color reset)"
+  echo "    $(color bold)6.$(color reset) Codex CLI — this project       $(color dim).codex/$(color reset)"
+  echo "    $(color bold)7.$(color reset) Codex CLI — global             $(color dim)$CODEX_HOME_DIR/$(color reset)"
+  echo "    $(color bold)8.$(color reset) Codex markdown — legacy        $(color dim)codex.md$(color reset)"
   echo ""
   printf "  Select [1]: "
   read -r choice
@@ -323,7 +398,9 @@ if $INTERACTIVE && [[ -t 0 ]]; then
     3) TARGET="opencode-project" ;;
     4) TARGET="opencode-global" ;;
     5) TARGET="cursor" ;;
-    6) TARGET="codex" ;;
+    6) TARGET="codex-project" ;;
+    7) TARGET="codex-global" ;;
+    8) TARGET="codex" ;;
     *) err "Invalid choice: $choice"; exit 1 ;;
   esac
 
@@ -367,9 +444,17 @@ case "$TARGET" in
     TARGET_BASE=".cursor/rules"
     TARGET_LABEL="Cursor (project)"
     ;;
+  codex-project)
+    TARGET_BASE=".codex"
+    TARGET_LABEL="Codex CLI (project)"
+    ;;
+  codex-global)
+    TARGET_BASE="$CODEX_HOME_DIR"
+    TARGET_LABEL="Codex CLI (global)"
+    ;;
   codex)
     TARGET_BASE="."
-    TARGET_LABEL="Codex CLI"
+    TARGET_LABEL="Codex markdown export (legacy)"
     ;;
 esac
 
@@ -389,7 +474,7 @@ if $DRY_RUN; then
       if [[ "$TARGET" == "cursor" ]]; then
         echo "    → $TARGET_BASE/$name.md"
       elif [[ "$TARGET" == "codex" ]]; then
-        echo "    → codex.md (appended)"
+        echo "    → codex.md (legacy export)"
       else
         echo "    → $TARGET_BASE/skills/$name/SKILL.md"
       fi
@@ -403,7 +488,7 @@ if $DRY_RUN; then
       if [[ "$TARGET" == "cursor" ]]; then
         echo "    → $TARGET_BASE/$name"
       elif [[ "$TARGET" == "codex" ]]; then
-        echo "    → codex.md (appended)"
+        echo "    → codex.md (legacy export)"
       else
         echo "    → $TARGET_BASE/agents/$name"
       fi
@@ -618,9 +703,54 @@ install_cursor() {
   write_manifest "$base"
 }
 
-# ── Install: Codex CLI ────────────────────────────────────────────────────────
+# ── Install: Codex skills registry (project/global) ──────────────────────────
 
-install_codex() {
+install_codex_registry() {
+  local base="$1"
+  local skills_installed=0
+  local agents_installed=0
+
+  echo ""
+  header "Installing to $base/ ..."
+  echo ""
+
+  if $INSTALL_SKILLS; then
+    mkdir -p "$base/skills"
+    for d in "${SKILL_DIRS[@]}"; do
+      name="$(basename "$d")"
+      mkdir -p "$base/skills/$name"
+      write_codex_skill "$d/SKILL.md" "$base/skills/$name/SKILL.md" "$name"
+      if [[ -d "$d/references" ]]; then
+        cp -r "$d/references" "$base/skills/$name/references"
+      fi
+      MANIFEST_SKILLS+=("$name")
+      skills_installed=$((skills_installed + 1))
+    done
+    info "$skills_installed skills installed"
+  fi
+
+  if $INSTALL_AGENTS; then
+    mkdir -p "$base/agents"
+    for f in "${AGENT_FILES[@]}"; do
+      local agent_name
+      agent_name="$(basename "$f")"
+      cp "$f" "$base/agents/$agent_name"
+      MANIFEST_AGENTS+=("$agent_name")
+      agents_installed=$((agents_installed + 1))
+    done
+    info "$agents_installed agents installed"
+  fi
+
+  if $INSTALL_HOOKS; then
+    warn "Hooks are not currently supported for Codex CLI — skipped"
+  fi
+
+  write_manifest "$base"
+}
+
+# ── Install: Codex markdown export (legacy) ───────────────────────────────────
+
+install_codex_markdown() {
   local outfile="codex.md"
   local skills_installed=0
   local agents_installed=0
@@ -741,7 +871,9 @@ case "$TARGET" in
   opencode-project) install_opencode "$TARGET_BASE" ;;
   opencode-global)  install_opencode "$TARGET_BASE" ;;
   cursor)         install_cursor "$TARGET_BASE" ;;
-  codex)          install_codex ;;
+  codex-project)  install_codex_registry "$TARGET_BASE" ;;
+  codex-global)   install_codex_registry "$TARGET_BASE" ;;
+  codex)          install_codex_markdown ;;
 esac
 
 # ── Done ──────────────────────────────────────────────────────────────────────
@@ -751,6 +883,7 @@ case "$TARGET" in
   claude-*) info "Done! Restart Claude Code to activate." ;;
   opencode-*) info "Done! Restart OpenCode to activate." ;;
   cursor)   info "Done! Restart Cursor to activate." ;;
+  codex-project|codex-global) info "Done! Restart Codex to activate." ;;
   codex)    info "Done! codex.md is ready." ;;
 esac
 echo "  To uninstall: $(color dim)bash $REPO_DIR/uninstall.sh$(color reset)"

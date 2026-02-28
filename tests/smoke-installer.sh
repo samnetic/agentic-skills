@@ -33,6 +33,17 @@ assert_eq() {
   fi
 }
 
+assert_le() {
+  local actual="$1"
+  local maximum="$2"
+  local label="$3"
+  if [[ "$actual" -le "$maximum" ]]; then
+    pass "$label ($actual <= $maximum)"
+  else
+    fail "$label (expected <=$maximum actual=$actual)"
+  fi
+}
+
 assert_contains() {
   local file="$1"
   local pattern="$2"
@@ -59,6 +70,7 @@ run() {
   bash "$ROOT_DIR/install.sh" --claude --force >/tmp/agentic-skills-smoke-claude-install.log
   bash "$ROOT_DIR/install.sh" --opencode --force >/tmp/agentic-skills-smoke-opencode-install.log
   bash "$ROOT_DIR/install.sh" --codex --force >/tmp/agentic-skills-smoke-codex-install.log
+  bash "$ROOT_DIR/install.sh" --codex-md --force >/tmp/agentic-skills-smoke-codex-md-install.log
 
   local claude_skills
   claude_skills="$(find .claude/skills -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
@@ -90,7 +102,34 @@ run() {
   assert_contains ".opencode/agents/software-architect.md" "mode: subagent" "OpenCode agent conversion uses subagent mode"
   assert_contains ".opencode/agents/software-architect.md" "tools:" "OpenCode agent conversion emits tool map"
 
-  assert_contains "codex.md" "25 expert-level domain skills + 9 specialized agents." "Codex output summary has corrected skill count"
+  local codex_skills
+  codex_skills="$(find .codex/skills -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
+  assert_eq "$codex_skills" "25" "Codex install skill count"
+
+  local codex_agents
+  codex_agents="$(find .codex/agents -maxdepth 1 -name '*.md' -type f | wc -l | tr -d ' ')"
+  assert_eq "$codex_agents" "9" "Codex install agent count"
+
+  local codex_desc_len
+  codex_desc_len="$(awk '
+    BEGIN { delim = 0; in_desc = 0; text = "" }
+    /^---[[:space:]]*$/ { delim++; if (delim > 1) exit; next }
+    delim == 1 {
+      if ($0 ~ /^description:[[:space:]]*>-/) { in_desc = 1; next }
+      if (in_desc == 1) {
+        if ($0 ~ /^[[:space:]]{2,}[^[:space:]].*/) {
+          sub(/^[[:space:]]+/, "", $0)
+          text = text (text ? " " : "") $0
+          next
+        }
+        if ($0 ~ /^[a-zA-Z0-9_-]+:/) { in_desc = 0 }
+      }
+    }
+    END { print length(text) }
+  ' .codex/skills/nextjs-react/SKILL.md)"
+  assert_le "$codex_desc_len" "1024" "Codex skill description is within parser limit"
+
+  assert_contains "codex.md" "25 expert-level domain skills + 9 specialized agents." "Codex markdown export summary has corrected skill count"
 
   if command -v jq >/dev/null 2>&1; then
     local opencode_target
@@ -124,11 +163,13 @@ EOF
 
   bash "$ROOT_DIR/uninstall.sh" --path .opencode --force >/tmp/agentic-skills-smoke-opencode-uninstall.log
   bash "$ROOT_DIR/uninstall.sh" --path .claude --force >/tmp/agentic-skills-smoke-claude-uninstall.log
-  bash "$ROOT_DIR/uninstall.sh" --path . --force >/tmp/agentic-skills-smoke-codex-uninstall.log
+  bash "$ROOT_DIR/uninstall.sh" --path .codex --force >/tmp/agentic-skills-smoke-codex-uninstall.log
+  bash "$ROOT_DIR/uninstall.sh" --path . --force >/tmp/agentic-skills-smoke-codex-md-uninstall.log
 
   [[ ! -f .opencode/.agentic-skills.manifest ]] && pass "OpenCode manifest removed" || fail "OpenCode manifest removed"
   [[ ! -f .claude/.agentic-skills.manifest ]] && pass "Claude manifest removed" || fail "Claude manifest removed"
-  [[ ! -f ./.agentic-skills.manifest ]] && pass "Codex manifest removed" || fail "Codex manifest removed"
+  [[ ! -f .codex/.agentic-skills.manifest ]] && pass "Codex manifest removed" || fail "Codex manifest removed"
+  [[ ! -f ./.agentic-skills.manifest ]] && pass "Codex markdown manifest removed" || fail "Codex markdown manifest removed"
 
   echo "== installer smoke complete: pass=$pass_count fail=$fail_count =="
   [[ $fail_count -eq 0 ]]

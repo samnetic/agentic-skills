@@ -12,6 +12,8 @@ All notable changes to this project will be documented in this file.
 
 - Agent catalog size updated from 8 to 9 across installer output, Codex export summary, README, and smoke tests.
 - Claude installer now auto-merges hook configuration into existing `settings.json` and `settings.local.json` when `jq` is available, preserving existing keys and avoiding manual merge prompts.
+- Codex installation now supports native skills/agents registry layouts via `--codex` (project `.codex/`) and `--codex-global` (`$CODEX_HOME`, default `~/.codex`), with `--codex-md` retained as legacy markdown export.
+- Manager/uninstaller discovery now includes `.codex` and `$CODEX_HOME` manifests for update/status/doctor/uninstall parity.
 
 ## [1.3.0] — 2026-02-28
 

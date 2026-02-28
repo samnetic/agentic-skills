@@ -12,7 +12,7 @@ agents/           → 9 agent .md files
 .claude/          → Mirror of skills + agents + hooks (for local development)
 .claude/hooks/    → 7 bash command hook scripts
 .opencode/        → OpenCode plugin bridge source (hook compatibility)
-install.sh        → Installer script (Claude/OpenCode/Cursor/Codex targets)
+install.sh        → Installer script (Claude/OpenCode/Cursor/Codex registry + codex.md legacy export)
 agentic-skills.sh → Unified lifecycle CLI (install/update/self-update/status/doctor/uninstall/version)
 package.json      → npm package metadata (`agentic-skills` CLI)
 bin/              → executable wrapper for npm/npx distribution

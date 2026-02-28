@@ -97,6 +97,8 @@ $ bash install.sh
     4. OpenCode — global
     5. Cursor — this project
     6. Codex CLI — this project
+    7. Codex CLI — global
+    8. Codex markdown — legacy
 
   Components: Skills, Agents, Hooks
 ```
@@ -118,6 +120,15 @@ bash install.sh --opencode-global --force
 
 # Cursor
 bash install.sh --cursor --force
+
+# Codex CLI (current project)
+bash install.sh --codex --force
+
+# Codex CLI (global CODEX_HOME, default ~/.codex)
+bash install.sh --codex-global --force
+
+# Legacy Codex markdown export
+bash install.sh --codex-md --force
 
 # Skills only, no agents or hooks
 bash install.sh --claude --skills-only --force
@@ -161,7 +172,7 @@ Use these to verify each installed coding agent can access skills in this repo:
 ```bash
 claude -p "In this repo, list directory names under ./skills only. Return exactly one line in this format: SKILLS:name1,name2,... sorted alphabetically with no spaces."
 
-codex exec "In this repo, list directory names under ./skills only. Return exactly one line in this format: SKILLS:name1,name2,... sorted alphabetically with no spaces."
+codex exec --skip-git-repo-check "In this repo, list directory names under ./.codex/skills only. Return exactly one line in this format: SKILLS:name1,name2,... sorted alphabetically with no spaces."
 
 opencode run "In this repo, list directory names under ./skills only. Return exactly one line in this format: SKILLS:name1,name2,... sorted alphabetically with no spaces."
 ```
@@ -276,7 +287,8 @@ While designed for Claude Code, these skills work with any AI coding assistant t
 | **Claude Code** | `--claude` or `--claude-global` | Skills → `.claude/skills/`, agents → `.claude/agents/`, hooks → `settings.json` + `settings.local.json` |
 | **OpenCode** | `--opencode` or `--opencode-global` | Skills → `.opencode/skills/` (or `~/.config/opencode/skills/`), agents → `.opencode/agents/` (converted to OpenCode subagent format), hooks → `.opencode/plugins/agentic-skills-hooks.js` |
 | **Cursor** | `--cursor` | Each skill/agent as a rule file in `.cursor/rules/` |
-| **Codex CLI** | `--codex` | All content concatenated into `codex.md` |
+| **Codex CLI** | `--codex` or `--codex-global` | Skills → `.codex/skills/` (or `$CODEX_HOME/skills/`), agents → `.codex/agents/` (or `$CODEX_HOME/agents/`) |
+| **Codex Legacy** | `--codex-md` | All content concatenated into `codex.md` |
 | **Any LLM** | — | Include skill content in system prompt |
 
 ## Maintainer Release Automation

@@ -89,6 +89,8 @@ else
   find_manifest "$HOME/.claude"
   find_manifest ".opencode"
   find_manifest "$HOME/.config/opencode"
+  find_manifest ".codex"
+  find_manifest "${CODEX_HOME:-$HOME/.codex}"
   find_manifest ".cursor/rules"
   find_manifest "."
 fi
@@ -196,7 +198,7 @@ echo ""
 skills_removed=0
 
 case "$TARGET" in
-  claude-project|claude-global|opencode-project|opencode-global)
+  claude-project|claude-global|opencode-project|opencode-global|codex-project|codex-global)
     for skill in "${SKILLS[@]}"; do
       skill_dir="$MANIFEST_DIR/skills/$skill"
       if [[ -d "$skill_dir" ]]; then
@@ -235,7 +237,7 @@ fi
 agents_removed=0
 
 case "$TARGET" in
-  claude-project|claude-global|opencode-project|opencode-global)
+  claude-project|claude-global|opencode-project|opencode-global|codex-project|codex-global)
     for agent in "${AGENTS[@]}"; do
       agent_file="$MANIFEST_DIR/agents/$agent"
       if [[ -f "$agent_file" ]]; then
