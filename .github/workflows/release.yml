@@ -86,21 +86,24 @@ jobs:
     needs:
       - validate
       - publish_npm
-    if: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN != '' }}
     permissions:
       contents: read
     env:
       HOMEBREW_TAP_REPO: ${{ vars.HOMEBREW_TAP_REPO }}
       HOMEBREW_TAP_BRANCH: ${{ vars.HOMEBREW_TAP_BRANCH }}
+      HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Update Homebrew tap formula
-        env:
-          HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
         run: |
           set -euo pipefail
+
+          if [[ -z "${HOMEBREW_TAP_GITHUB_TOKEN:-}" ]]; then
+            echo "HOMEBREW_TAP_GITHUB_TOKEN is not set; skipping Homebrew formula update."
+            exit 0
+          fi
 
           VERSION="${GITHUB_REF_NAME#v}"
           TAR_URL="https://github.com/${GITHUB_REPOSITORY}/archive/refs/tags/${GITHUB_REF_NAME}.tar.gz"
