@@ -27,7 +27,7 @@ cd your-project && bash /path/to/agentic-skills/install.sh
 
 ### Unified CLI (Recommended)
 
-Use the wrapper for a cleaner lifecycle UX (`install`, `update`, `self-update`, `status`, `doctor`, `version`, `uninstall`):
+Use the wrapper for a cleaner lifecycle UX (`install`, `update`, `self-update`, `disable`, `enable`, `status`, `doctor`, `version`, `uninstall`):
 
 ```bash
 # Install (example: Claude project)
@@ -39,6 +39,16 @@ bash /path/to/agentic-skills/agentic-skills.sh update --all
 # Self-update from latest GitHub main, then run update
 bash /path/to/agentic-skills/agentic-skills.sh self-update --all --yes
 
+# Temporarily disable skills (default component)
+bash /path/to/agentic-skills/agentic-skills.sh disable --path .claude
+
+# Re-enable them
+bash /path/to/agentic-skills/agentic-skills.sh enable --path .claude
+
+# Toggle all components (skills + agents + hooks/plugins where supported)
+bash /path/to/agentic-skills/agentic-skills.sh disable --path .opencode --all-components
+bash /path/to/agentic-skills/agentic-skills.sh enable --path .opencode --all-components
+
 # Show what is installed
 bash /path/to/agentic-skills/agentic-skills.sh status
 
@@ -48,6 +58,34 @@ bash /path/to/agentic-skills/agentic-skills.sh doctor
 # Uninstall
 bash /path/to/agentic-skills/agentic-skills.sh uninstall --path .claude --force
 ```
+
+### Temporary Toggle (Disable/Enable)
+
+`disable` and `enable` are reversible toggles. By default, they affect `skills` only.
+
+```bash
+# Default: toggle skills only
+bash agentic-skills.sh disable --path .codex
+bash agentic-skills.sh enable --path .codex
+
+# Toggle specific components
+bash agentic-skills.sh disable --path .claude --agents
+bash agentic-skills.sh enable --path .claude --agents
+bash agentic-skills.sh disable --path .opencode --hooks
+bash agentic-skills.sh enable --path .opencode --hooks
+
+# Toggle everything for one target
+bash agentic-skills.sh disable --path .claude --all-components
+bash agentic-skills.sh enable --path .claude --all-components
+
+# Toggle everything for all detected installations
+bash agentic-skills.sh disable --all --all-components
+bash agentic-skills.sh enable --all --all-components
+```
+
+Notes:
+- Codex CLI supports skills/agents toggling, but not hooks.
+- Toggle state is stored under `.agentic-skills-disabled/` inside each install target.
 
 ### npm / npx Command
 
@@ -62,6 +100,8 @@ npx agentic-skills@latest status
 npx agentic-skills@latest doctor
 npx agentic-skills@latest update --all
 npx agentic-skills@latest self-update --all --yes
+npx agentic-skills@latest disable --all --all-components
+npx agentic-skills@latest enable --all --all-components
 ```
 
 ### Homebrew (macOS/Linux)

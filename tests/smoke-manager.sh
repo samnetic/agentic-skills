@@ -132,6 +132,48 @@ run() {
   bash "$ROOT_DIR/agentic-skills.sh" uninstall --path .opencode --force >/tmp/agentic-skills-manager-opencode-uninstall.log
   [[ ! -f .opencode/.agentic-skills.manifest ]] && pass "Hooks-only uninstall removed manifest" || fail "Hooks-only uninstall removed manifest"
 
+  bash "$ROOT_DIR/agentic-skills.sh" install --claude --force >/tmp/agentic-skills-manager-claude-toggle-install.log
+  bash "$ROOT_DIR/agentic-skills.sh" disable --path .claude --all-components >/tmp/agentic-skills-manager-claude-disable.log
+  [[ ! -d .claude/skills ]] && pass "Claude disable removes live skills directory" || fail "Claude disable removes live skills directory"
+  [[ ! -d .claude/agents ]] && pass "Claude disable removes live agents directory" || fail "Claude disable removes live agents directory"
+  [[ ! -d .claude/hooks ]] && pass "Claude disable removes live hooks directory" || fail "Claude disable removes live hooks directory"
+  [[ -d .claude/.agentic-skills-disabled/skills ]] && pass "Claude disable stores skills backup" || fail "Claude disable stores skills backup"
+  [[ -d .claude/.agentic-skills-disabled/agents ]] && pass "Claude disable stores agents backup" || fail "Claude disable stores agents backup"
+  [[ -d .claude/.agentic-skills-disabled/hooks ]] && pass "Claude disable stores hooks backup" || fail "Claude disable stores hooks backup"
+  bash "$ROOT_DIR/agentic-skills.sh" enable --path .claude --all-components >/tmp/agentic-skills-manager-claude-enable.log
+  [[ -d .claude/skills ]] && pass "Claude enable restores skills directory" || fail "Claude enable restores skills directory"
+  [[ -d .claude/agents ]] && pass "Claude enable restores agents directory" || fail "Claude enable restores agents directory"
+  [[ -d .claude/hooks ]] && pass "Claude enable restores hooks directory" || fail "Claude enable restores hooks directory"
+  bash "$ROOT_DIR/agentic-skills.sh" uninstall --path .claude --force >/tmp/agentic-skills-manager-claude-toggle-uninstall.log
+
+  bash "$ROOT_DIR/agentic-skills.sh" install --codex --force >/tmp/agentic-skills-manager-codex-toggle-install.log
+  bash "$ROOT_DIR/agentic-skills.sh" disable --path .codex >/tmp/agentic-skills-manager-codex-disable-skills.log
+  [[ ! -d .codex/skills ]] && pass "Codex disable default removes live skills directory" || fail "Codex disable default removes live skills directory"
+  [[ -d .codex/.agentic-skills-disabled/skills ]] && pass "Codex disable default stores skills backup" || fail "Codex disable default stores skills backup"
+  [[ -d .codex/agents ]] && pass "Codex disable default keeps agents directory" || fail "Codex disable default keeps agents directory"
+  bash "$ROOT_DIR/agentic-skills.sh" enable --path .codex >/tmp/agentic-skills-manager-codex-enable-skills.log
+  [[ -d .codex/skills ]] && pass "Codex enable default restores skills directory" || fail "Codex enable default restores skills directory"
+  bash "$ROOT_DIR/agentic-skills.sh" disable --path .codex --agents >/tmp/agentic-skills-manager-codex-disable-agents.log
+  [[ ! -d .codex/agents ]] && pass "Codex disable --agents removes live agents directory" || fail "Codex disable --agents removes live agents directory"
+  [[ -d .codex/.agentic-skills-disabled/agents ]] && pass "Codex disable --agents stores agents backup" || fail "Codex disable --agents stores agents backup"
+  bash "$ROOT_DIR/agentic-skills.sh" enable --path .codex --agents >/tmp/agentic-skills-manager-codex-enable-agents.log
+  [[ -d .codex/agents ]] && pass "Codex enable --agents restores agents directory" || fail "Codex enable --agents restores agents directory"
+  bash "$ROOT_DIR/agentic-skills.sh" uninstall --path .codex --force >/tmp/agentic-skills-manager-codex-toggle-uninstall.log
+
+  bash "$ROOT_DIR/agentic-skills.sh" install --opencode --force >/tmp/agentic-skills-manager-opencode-toggle-install.log
+  bash "$ROOT_DIR/agentic-skills.sh" disable --path .opencode --all-components >/tmp/agentic-skills-manager-opencode-disable.log
+  [[ ! -d .opencode/skills ]] && pass "OpenCode disable removes live skills directory" || fail "OpenCode disable removes live skills directory"
+  [[ ! -d .opencode/agents ]] && pass "OpenCode disable removes live agents directory" || fail "OpenCode disable removes live agents directory"
+  [[ ! -f .opencode/plugins/agentic-skills-hooks.js ]] && pass "OpenCode disable removes live hook bridge plugin" || fail "OpenCode disable removes live hook bridge plugin"
+  [[ -d .opencode/.agentic-skills-disabled/skills ]] && pass "OpenCode disable stores skills backup" || fail "OpenCode disable stores skills backup"
+  [[ -d .opencode/.agentic-skills-disabled/agents ]] && pass "OpenCode disable stores agents backup" || fail "OpenCode disable stores agents backup"
+  [[ -f .opencode/.agentic-skills-disabled/plugins/agentic-skills-hooks.js ]] && pass "OpenCode disable stores plugin backup" || fail "OpenCode disable stores plugin backup"
+  bash "$ROOT_DIR/agentic-skills.sh" enable --path .opencode --all-components >/tmp/agentic-skills-manager-opencode-enable.log
+  [[ -d .opencode/skills ]] && pass "OpenCode enable restores skills directory" || fail "OpenCode enable restores skills directory"
+  [[ -d .opencode/agents ]] && pass "OpenCode enable restores agents directory" || fail "OpenCode enable restores agents directory"
+  [[ -f .opencode/plugins/agentic-skills-hooks.js ]] && pass "OpenCode enable restores hook bridge plugin" || fail "OpenCode enable restores hook bridge plugin"
+  bash "$ROOT_DIR/agentic-skills.sh" uninstall --path .opencode --force >/tmp/agentic-skills-manager-opencode-toggle-uninstall.log
+
   echo "== manager smoke complete: pass=$pass_count fail=$fail_count =="
   [[ $fail_count -eq 0 ]]
 }

@@ -37,6 +37,8 @@ Commands:
   install     Install skills/agents/hooks (delegates to install.sh)
   update      Reinstall based on existing manifest(s)
   self-update Fetch latest toolkit and run update
+  disable     Temporarily disable installed components (toggle off)
+  enable      Re-enable previously disabled components (toggle on)
   uninstall   Remove installed files (delegates to uninstall.sh)
   status      Show detected installations
   doctor      Validate installation integrity
@@ -47,6 +49,8 @@ Examples:
   bash agentic-skills.sh install --claude --force
   bash agentic-skills.sh update --all
   bash agentic-skills.sh self-update --all --yes
+  bash agentic-skills.sh disable --path .claude --all-components
+  bash agentic-skills.sh enable --path .claude --all-components
   bash agentic-skills.sh uninstall --path .claude --force
   bash agentic-skills.sh status
   bash agentic-skills.sh doctor
@@ -507,6 +511,237 @@ EOF
   cleanup_self_update
 }
 
+toggle_component() {
+  local mode="$1"
+  local label="$2"
+  local live_path="$3"
+  local disabled_path="$4"
+
+  if [[ "$mode" == "disable" ]]; then
+    if [[ -e "$live_path" ]]; then
+      if [[ -e "$disabled_path" ]]; then
+        warn "$label disable target already exists: $disabled_path"
+        return 1
+      fi
+      mkdir -p "$(dirname "$disabled_path")"
+      mv "$live_path" "$disabled_path"
+      info "Disabled $label"
+      return 0
+    fi
+    if [[ -e "$disabled_path" ]]; then
+      info "$label already disabled"
+      return 0
+    fi
+    warn "$label not found; skipped"
+    return 1
+  fi
+
+  if [[ -e "$disabled_path" ]]; then
+    if [[ -e "$live_path" ]]; then
+      warn "$label enable target already exists: $live_path"
+      return 1
+    fi
+    mkdir -p "$(dirname "$live_path")"
+    mv "$disabled_path" "$live_path"
+    info "Enabled $label"
+    return 0
+  fi
+  if [[ -e "$live_path" ]]; then
+    info "$label already enabled"
+    return 0
+  fi
+  warn "$label disabled backup not found; skipped"
+  return 1
+}
+
+toggle_manifest() {
+  local mode="$1"
+  local manifest="$2"
+  local toggle_skills="$3"
+  local toggle_agents="$4"
+  local toggle_hooks="$5"
+
+  local target target_path manifest_dir disabled_root
+  target="$(json_value "$manifest" "target")"
+  target_path="$(json_value "$manifest" "target_path")"
+  manifest_dir="$(dirname "$manifest")"
+  disabled_root="$manifest_dir/.agentic-skills-disabled"
+
+  local skill agent hs pf
+  local -a skills agents hook_scripts plugin_files
+  mapfile -t skills < <(json_array_lines "$manifest" "skills")
+  mapfile -t agents < <(json_array_lines "$manifest" "agents")
+  mapfile -t hook_scripts < <(json_array_lines "$manifest" "hook_scripts")
+  mapfile -t plugin_files < <(json_array_lines "$manifest" "plugin_files")
+
+  info "$mode target=$target path=$target_path"
+
+  case "$target" in
+    claude-project|claude-global|opencode-project|opencode-global|codex-project|codex-global)
+      if [[ "$toggle_skills" == "true" ]]; then
+        toggle_component "$mode" "skills" "$manifest_dir/skills" "$disabled_root/skills" || true
+      fi
+      if [[ "$toggle_agents" == "true" ]]; then
+        toggle_component "$mode" "agents" "$manifest_dir/agents" "$disabled_root/agents" || true
+      fi
+      if [[ "$toggle_hooks" == "true" ]]; then
+        if [[ "$target" == claude-* ]]; then
+          toggle_component "$mode" "hooks" "$manifest_dir/hooks" "$disabled_root/hooks" || true
+        elif [[ "$target" == opencode-* ]]; then
+          for pf in "${plugin_files[@]}"; do
+            toggle_component "$mode" "plugin $pf" "$manifest_dir/plugins/$pf" "$disabled_root/plugins/$pf" || true
+          done
+          if [[ "$mode" == "disable" && -d "$manifest_dir/plugins" && -z "$(ls -A "$manifest_dir/plugins" 2>/dev/null)" ]]; then
+            rmdir "$manifest_dir/plugins" 2>/dev/null || true
+          fi
+          if [[ "$mode" == "enable" && -d "$disabled_root/plugins" && -z "$(ls -A "$disabled_root/plugins" 2>/dev/null)" ]]; then
+            rmdir "$disabled_root/plugins" 2>/dev/null || true
+          fi
+        else
+          warn "Hooks are not supported for target $target"
+        fi
+      fi
+      ;;
+    cursor)
+      if [[ "$toggle_skills" == "true" ]]; then
+        for skill in "${skills[@]}"; do
+          toggle_component "$mode" "skill $skill" "$manifest_dir/$skill.md" "$disabled_root/cursor/skills/$skill.md" || true
+        done
+      fi
+      if [[ "$toggle_agents" == "true" ]]; then
+        for agent in "${agents[@]}"; do
+          toggle_component "$mode" "agent $agent" "$manifest_dir/$agent" "$disabled_root/cursor/agents/$agent" || true
+        done
+      fi
+      if [[ "$toggle_hooks" == "true" ]]; then
+        warn "Hooks are not supported for target $target"
+      fi
+      ;;
+    codex)
+      if [[ "$toggle_skills" == "true" || "$toggle_agents" == "true" ]]; then
+        toggle_component "$mode" "codex.md content" "$target_path/codex.md" "$disabled_root/codex.md" || true
+      fi
+      if [[ "$toggle_hooks" == "true" ]]; then
+        warn "Hooks are not supported for target $target"
+      fi
+      ;;
+    *)
+      err "Unknown target in manifest: $target ($manifest)"
+      return 1
+      ;;
+  esac
+
+  if [[ "$mode" == "enable" && -d "$disabled_root" && -z "$(ls -A "$disabled_root" 2>/dev/null)" ]]; then
+    rmdir "$disabled_root" 2>/dev/null || true
+  fi
+}
+
+cmd_toggle() {
+  local mode="$1"
+  shift || true
+
+  local search_path=""
+  local apply_all=false
+  local toggle_skills=false
+  local toggle_agents=false
+  local toggle_hooks=false
+  local all_components=false
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --path)
+        search_path="$2"
+        shift 2
+        ;;
+      --all)
+        apply_all=true
+        shift
+        ;;
+      --skills)
+        toggle_skills=true
+        shift
+        ;;
+      --agents)
+        toggle_agents=true
+        shift
+        ;;
+      --hooks)
+        toggle_hooks=true
+        shift
+        ;;
+      --all-components)
+        all_components=true
+        shift
+        ;;
+      --no-color)
+        USE_COLOR=false
+        shift
+        ;;
+      --help)
+        cat <<'EOF'
+Usage: bash agentic-skills.sh <disable|enable> [options]
+
+Options:
+  --path <dir-or-manifest>  Target a specific installation
+  --all                     Apply to all detected installations
+  --skills                  Toggle skills component
+  --agents                  Toggle agents component
+  --hooks                   Toggle hooks/plugins component (where supported)
+  --all-components          Toggle skills + agents + hooks/plugins
+  --no-color                Disable colors
+
+Notes:
+  - Default component set is skills only.
+  - Codex CLI does not support hooks.
+EOF
+        return 0
+        ;;
+      *)
+        err "Unknown option: $1"
+        return 1
+        ;;
+    esac
+  done
+
+  if $all_components; then
+    toggle_skills=true
+    toggle_agents=true
+    toggle_hooks=true
+  fi
+
+  if ! $toggle_skills && ! $toggle_agents && ! $toggle_hooks; then
+    toggle_skills=true
+  fi
+
+  discover_manifests "$search_path"
+  if [[ ${#MANIFESTS[@]} -eq 0 ]]; then
+    err "No Agentic Skills installation found."
+    return 1
+  fi
+
+  local -a targets=()
+  if $apply_all; then
+    targets=("${MANIFESTS[@]}")
+  else
+    local selected
+    selected="$(select_manifest_if_needed)" || return 1
+    targets=("$selected")
+  fi
+
+  local m
+  for m in "${targets[@]}"; do
+    toggle_manifest "$mode" "$m" "$toggle_skills" "$toggle_agents" "$toggle_hooks"
+  done
+}
+
+cmd_disable() {
+  cmd_toggle "disable" "$@"
+}
+
+cmd_enable() {
+  cmd_toggle "enable" "$@"
+}
+
 cmd_doctor() {
   local search_path=""
   while [[ $# -gt 0 ]]; do
@@ -648,6 +883,8 @@ main() {
     install) cmd_install "$@" ;;
     update) cmd_update "$@" ;;
     self-update) cmd_self_update "$@" ;;
+    disable) cmd_disable "$@" ;;
+    enable) cmd_enable "$@" ;;
     uninstall) cmd_uninstall "$@" ;;
     status) cmd_status "$@" ;;
     doctor) cmd_doctor "$@" ;;
