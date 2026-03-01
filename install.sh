@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ── Agentic Skills Installer ──────────────────────────────────────────────────
-# Interactive multi-platform installer for 25 skills, 9 agents, and 7 hooks.
+# Interactive multi-platform installer for curated skills, agents, and hooks.
 # Supports Claude Code (project/global), OpenCode (project/global), Cursor,
 # Codex skills registry (project/global), and legacy codex.md export.
 #
@@ -63,7 +63,7 @@ banner() {
   echo ""
   echo "  $(color cyan)╭──────────────────────────────────────╮$(color reset)"
   echo "  $(color cyan)│$(color reset)  $(color bold)Agentic Skills$(color reset)                      $(color cyan)│$(color reset)"
-  echo "  $(color cyan)│$(color reset)  25 skills · 9 agents · 7 hooks      $(color cyan)│$(color reset)"
+  echo "  $(color cyan)│$(color reset)  ${SKILL_COUNT:-?} skills · ${AGENT_COUNT:-?} agents · 7 hooks     $(color cyan)│$(color reset)"
   echo "  $(color cyan)╰──────────────────────────────────────╯$(color reset)"
   echo ""
 }
@@ -265,6 +265,31 @@ merge_claude_hook_settings() {
   warn "Failed to auto-merge hooks in $settings_name — merge manually from:"
   echo "    $HOOK_SETTINGS_URL"
   return 1
+}
+
+upgrade_claude_hook_commands() {
+  local settings_file="$1"
+  local settings_name="$2"
+
+  if [[ ! -f "$settings_file" ]]; then
+    return 0
+  fi
+
+  if ! grep -q '"command": "bash \$CLAUDE_PROJECT_DIR/.claude/hooks/' "$settings_file" 2>/dev/null; then
+    return 0
+  fi
+
+  sed -i \
+    -e 's|"command": "bash \$CLAUDE_PROJECT_DIR/.claude/hooks/stop.sh"|"command": "if [ -x \"\$CLAUDE_PROJECT_DIR/.claude/hooks/stop.sh\" ]; then bash \"\$CLAUDE_PROJECT_DIR/.claude/hooks/stop.sh\"; elif [ -x \"\$HOME/.claude/hooks/stop.sh\" ]; then bash \"\$HOME/.claude/hooks/stop.sh\"; fi"|g' \
+    -e 's|"command": "bash \$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.sh"|"command": "if [ -x \"\$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.sh\" ]; then bash \"\$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.sh\"; elif [ -x \"\$HOME/.claude/hooks/session-start.sh\" ]; then bash \"\$HOME/.claude/hooks/session-start.sh\"; fi"|g' \
+    -e 's|"command": "bash \$CLAUDE_PROJECT_DIR/.claude/hooks/session-start-compact.sh"|"command": "if [ -x \"\$CLAUDE_PROJECT_DIR/.claude/hooks/session-start-compact.sh\" ]; then bash \"\$CLAUDE_PROJECT_DIR/.claude/hooks/session-start-compact.sh\"; elif [ -x \"\$HOME/.claude/hooks/session-start-compact.sh\" ]; then bash \"\$HOME/.claude/hooks/session-start-compact.sh\"; fi"|g' \
+    -e 's|"command": "bash \$CLAUDE_PROJECT_DIR/.claude/hooks/pre-compact.sh"|"command": "if [ -x \"\$CLAUDE_PROJECT_DIR/.claude/hooks/pre-compact.sh\" ]; then bash \"\$CLAUDE_PROJECT_DIR/.claude/hooks/pre-compact.sh\"; elif [ -x \"\$HOME/.claude/hooks/pre-compact.sh\" ]; then bash \"\$HOME/.claude/hooks/pre-compact.sh\"; fi"|g' \
+    -e 's|"command": "bash \$CLAUDE_PROJECT_DIR/.claude/hooks/pre-tool-use.sh"|"command": "if [ -x \"\$CLAUDE_PROJECT_DIR/.claude/hooks/pre-tool-use.sh\" ]; then bash \"\$CLAUDE_PROJECT_DIR/.claude/hooks/pre-tool-use.sh\"; elif [ -x \"\$HOME/.claude/hooks/pre-tool-use.sh\" ]; then bash \"\$HOME/.claude/hooks/pre-tool-use.sh\"; fi"|g' \
+    -e 's|"command": "bash \$CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use.sh"|"command": "if [ -x \"\$CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use.sh\" ]; then bash \"\$CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use.sh\"; elif [ -x \"\$HOME/.claude/hooks/post-tool-use.sh\" ]; then bash \"\$HOME/.claude/hooks/post-tool-use.sh\"; fi"|g' \
+    -e 's|"command": "bash \$CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use-failure.sh"|"command": "if [ -x \"\$CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use-failure.sh\" ]; then bash \"\$CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use-failure.sh\"; elif [ -x \"\$HOME/.claude/hooks/post-tool-use-failure.sh\" ]; then bash \"\$HOME/.claude/hooks/post-tool-use-failure.sh\"; fi"|g' \
+    "$settings_file"
+
+  info "Hook command fallback added to $settings_name"
 }
 
 # ── Defaults ──────────────────────────────────────────────────────────────────
@@ -594,6 +619,7 @@ install_claude() {
       else
         merge_claude_hook_settings "$settings_file" "$settings_src" "$settings_name" || true
       fi
+      upgrade_claude_hook_commands "$settings_file" "$settings_name" || true
     done
   fi
 
@@ -772,7 +798,7 @@ install_codex_markdown() {
   {
     echo "# Agentic Skills"
     echo ""
-    echo "> 25 expert-level domain skills + 9 specialized agents."
+    echo "> $SKILL_COUNT expert-level domain skills + $AGENT_COUNT specialized agents."
     echo ""
 
     # Skills

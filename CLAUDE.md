@@ -7,8 +7,8 @@ Use `install.sh` from a target project to copy skills/agents/hooks for supported
 ## Repository Structure
 
 ```
-skills/           → 25 skill directories, each containing SKILL.md (npx distribution root)
-agents/           → 9 agent .md files
+skills/           → 26 skill directories, each containing SKILL.md (npx distribution root)
+agents/           → 10 agent .md files
 .claude/          → Mirror of skills + agents + hooks (for local development)
 .claude/hooks/    → 7 bash command hook scripts
 .opencode/        → OpenCode plugin bridge source (hook compatibility)
@@ -21,7 +21,7 @@ scripts/          → release helpers (formula rendering, release metadata check
 CHANGELOG.md      → Release history
 ```
 
-## Available Skills (25)
+## Available Skills (26)
 
 | Skill | Lines | Triggers |
 |-------|-------|----------|
@@ -35,6 +35,7 @@ CHANGELOG.md      → Release history
 | `postgres-db` | 1200+ | schema, query optimization, indexes, RLS, migrations, PgBouncer |
 | `nodejs-engineering` | 1470+ | Node.js 22+, event loop, Express 5/Fastify 5, AsyncLocalStorage, Error.cause |
 | `devops-cicd` | 1450+ | GitHub Actions, CI/CD, deployment strategies, Terraform CI/CD, monitoring |
+| `trigger-dev-self-hosted` | 80+ | Trigger.dev tasks/workflows, self-hosting, queue/idempotency/retries, production Kubernetes guidance |
 | `frontend-development` | 1250+ | CSS, accessibility, WCAG, responsive design, Core Web Vitals |
 | `software-architecture` | 1000+ | system design, ADR, architecture review, C4 model, DDD |
 | `typescript-engineering` | 1100+ | TypeScript 5.8/5.9, tsconfig, Zod v4, branded types, Effect-TS |
@@ -51,7 +52,7 @@ CHANGELOG.md      → Release history
 | `technical-writing` | 1680+ | Diátaxis, README, API docs, JSDoc/TSDoc, ADRs, changelogs, runbooks |
 | `docker-production` | 620+ | Dockerfile, compose, multi-stage builds, container security |
 
-## Available Agents (9)
+## Available Agents (10)
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
@@ -61,6 +62,7 @@ CHANGELOG.md      → Release history
 | `simplify` | opus | Parallel reuse/quality/efficiency review with direct cleanup fixes |
 | `db-architect` | opus | Schema design, query optimization, migration planning |
 | `devops-engineer` | sonnet | CI/CD pipelines, GitHub Actions, deployment automation |
+| `trigger-dev-expert` | sonnet | Trigger.dev tasks/workflows, self-hosting and production rollout guidance |
 | `qa-engineer` | sonnet | Test strategy, test implementation, coverage analysis |
 | `ba-analyst` | sonnet | Requirements gathering, PRDs, user stories |
 | `git-flow-expert` | sonnet | Branching strategy, git hooks, release automation |

@@ -1,6 +1,6 @@
 # Agentic Skills
 
-> 25 expert-level domain skills + 9 specialized agents for Claude Code, OpenCode, Cursor, and Codex.
+> 26 expert-level domain skills + 10 specialized agents for Claude Code, OpenCode, Cursor, and Codex.
 
 Production-grade reference guides with decision trees, anti-patterns, code examples, and checklists. Drop into any project for instant AI-assisted development expertise.
 
@@ -127,7 +127,7 @@ $ bash install.sh
 
   ╭──────────────────────────────────────╮
   │  Agentic Skills                      │
-  │  25 skills · 9 agents · 7 hooks      │
+  │  26 skills · 10 agents · 7 hooks      │
   ╰──────────────────────────────────────╯
 
   Install to:
@@ -225,7 +225,7 @@ npx skills add samnetic/agentic-skills
 
 Installs skills only (no agents or hooks) into `.claude/skills/` in the current project.
 
-## Skills (25)
+## Skills (26)
 
 | Skill | Lines | Description |
 |-------|-------|-------------|
@@ -239,6 +239,7 @@ Installs skills only (no agents or hooks) into `.claude/skills/` in the current 
 | `postgres-db` | 1200+ | Schema design, PG 18, query optimization, partitioning, RLS, migrations, PgBouncer |
 | `nodejs-engineering` | 1470+ | Node.js 22+, event loop, Express 5/Fastify 5, AsyncLocalStorage, Error.cause, worker threads |
 | `devops-cicd` | 1450+ | GitHub Actions, reusable workflows, OIDC, deployment strategies, Terraform CI/CD, monitoring, Dagger |
+| `trigger-dev-self-hosted` | 80+ | Trigger.dev tasks and AI workflows, self-hosting runbook, queue/idempotency/retry guardrails, Kubernetes production baseline |
 | `frontend-development` | 1250+ | Modern CSS, :has(), subgrid, accessibility WCAG 2.2, design systems, Core Web Vitals |
 | `software-architecture` | 1000+ | C4 model, ADRs, DDD, modular monolith, AI-native architecture, deep modules |
 | `typescript-engineering` | 1100+ | TypeScript 5.8/5.9, Zod v4, branded types, discriminated unions, Effect-TS, monorepo |
@@ -255,7 +256,7 @@ Installs skills only (no agents or hooks) into `.claude/skills/` in the current 
 | `technical-writing` | 1680+ | Diátaxis, README templates, API docs, JSDoc/TSDoc, ADRs, changelogs, runbooks, onboarding |
 | `docker-production` | 620+ | Multi-stage builds, security hardening, compose patterns, container scanning |
 
-## Agents (9)
+## Agents (10)
 
 Specialized personas that combine multiple skills for focused tasks:
 
@@ -267,6 +268,7 @@ Specialized personas that combine multiple skills for focused tasks:
 | `simplify` | opus | Reuse/quality/efficiency review in parallel, then direct cleanup fixes |
 | `db-architect` | opus | Schema design, query optimization, migration planning |
 | `devops-engineer` | sonnet | CI/CD pipelines, GitHub Actions, deployment automation |
+| `trigger-dev-expert` | sonnet | Trigger.dev tasks/workflows, self-hosted production guidance, queue/retry/idempotency strategy |
 | `qa-engineer` | sonnet | Test strategy, test implementation, coverage analysis |
 | `ba-analyst` | sonnet | Requirements gathering, PRDs, user stories |
 | `git-flow-expert` | sonnet | Branching strategy, git hooks, release automation |
@@ -278,6 +280,7 @@ Use agents with `@agent-name` in Claude Code:
 @security-auditor Review this authentication module
 @pr-reviewer Review the changes in this PR
 @simplify Review and simplify my current git diff, then apply fixes
+@trigger-dev-expert Build a self-hosted Trigger.dev deployment and production workflow design
 ```
 
 ## Hooks
@@ -358,8 +361,8 @@ Agentic Skills provides **deep domain expertise and context engineering** — th
 - **[GSD (Get Stuff Done)](https://github.com/patrickjm/gsd-claude-code)** — Context engineering for Claude Code. Prevents context degradation via fresh-context-per-task spawning and aggressive task atomicity. *Agentic Skills enhances each spawned context with domain-specific knowledge and hooks that survive compaction.*
 
 **What only Agentic Skills provides:**
-- 25 production-grade skill guides with decision trees, anti-patterns, and checklists
-- 9 specialized agents (`@software-architect`, `@security-auditor`, etc.)
+- 26 production-grade skill guides with decision trees, anti-patterns, and checklists
+- 10 specialized agents (`@software-architect`, `@security-auditor`, etc.)
 - 7 deterministic command hooks — transcript backup, context injection, lint-on-write, rm -rf guard, error logging
 
 ## Contributing
