@@ -205,6 +205,13 @@ bash tests/smoke-manager.sh
 bash tests/smoke-clis.sh
 ```
 
+### Sync Upstream Skills
+
+```bash
+# Refresh vendored upstream browser automation skill
+npm run skills:sync:agent-browser
+```
+
 ### Live CLI Verification
 
 Use these to verify each installed coding agent can access skills in this repo:

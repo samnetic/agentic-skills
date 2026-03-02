@@ -46,6 +46,7 @@ Updated core skills:
 2. `technical-writing`
 3. `software-architecture`
 4. `spec-orchestrator`
+5. `agent-browser`
 
 Refactor outcomes:
 
@@ -56,6 +57,11 @@ Refactor outcomes:
 - Added reusable templates/checklists under each skill's `references/` folder.
 - Added top-level routing skill (`spec-orchestrator`) to select the correct
   spec/doc workflow with minimal overlap.
+- Added browser automation core skill (`agent-browser`) with upstream content
+  vendored under `skills/agent-browser/references/upstream/`.
+- Added sync automation:
+  `bash scripts/sync-agent-browser-skill.sh` (also available as
+  `npm run skills:sync:agent-browser`).
 
 Validation:
 

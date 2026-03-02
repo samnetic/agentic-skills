@@ -29,9 +29,10 @@
   "scripts": {
     "test": "bash tests/smoke-installer.sh && bash tests/smoke-manager.sh",
     "test:local": "bash tests/run-all.sh",
-    "skills:quality": "python3 scripts/check-skill-quality.py skills/startup-first-principles skills/positioning-brand-system skills/growth-experiment-lab skills/product-marketing-context skills/pricing-strategy skills/seo-audit skills/page-cro skills/analytics-tracking skills/schema-markup skills/copywriting skills/content-strategy skills/launch-strategy skills/programmatic-seo skills/business-analysis skills/technical-writing skills/software-architecture skills/spec-orchestrator --profile internal --strict-frontmatter --fail-on-warn --verbose",
+    "skills:quality": "python3 scripts/check-skill-quality.py skills/startup-first-principles skills/positioning-brand-system skills/growth-experiment-lab skills/product-marketing-context skills/pricing-strategy skills/seo-audit skills/page-cro skills/analytics-tracking skills/schema-markup skills/copywriting skills/content-strategy skills/launch-strategy skills/programmatic-seo skills/business-analysis skills/technical-writing skills/software-architecture skills/spec-orchestrator skills/agent-browser --profile internal --strict-frontmatter --fail-on-warn --verbose",
     "skills:quality:candidates": "python3 scripts/check-skill-quality.py external-skills/reused --profile third-party",
-    "skills:autofix-plan": "python3 scripts/check-skill-quality.py external-skills/reused --profile third-party --emit-plan quality/candidate-skills-refactor-plan.md"
+    "skills:autofix-plan": "python3 scripts/check-skill-quality.py external-skills/reused --profile third-party --emit-plan quality/candidate-skills-refactor-plan.md",
+    "skills:sync:agent-browser": "bash scripts/sync-agent-browser-skill.sh"
   },
   "keywords": [
     "ai",
