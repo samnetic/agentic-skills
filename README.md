@@ -1,6 +1,6 @@
 # Agentic Skills
 
-> 26 expert-level domain skills + 10 specialized agents for Claude Code, OpenCode, Cursor, and Codex.
+> Curated expert-level domain skills + specialized agents for Claude Code, OpenCode, Cursor, and Codex.
 
 Production-grade reference guides with decision trees, anti-patterns, code examples, and checklists. Drop into any project for instant AI-assisted development expertise.
 
@@ -127,7 +127,7 @@ $ bash install.sh
 
   ╭──────────────────────────────────────╮
   │  Agentic Skills                      │
-  │  26 skills · 10 agents · 7 hooks      │
+  │  Curated skills · agents · 7 hooks    │
   ╰──────────────────────────────────────╯
 
   Install to:
@@ -225,7 +225,7 @@ npx skills add samnetic/agentic-skills
 
 Installs skills only (no agents or hooks) into `.claude/skills/` in the current project.
 
-## Skills (26)
+## Skills
 
 | Skill | Lines | Description |
 |-------|-------|-------------|
@@ -361,8 +361,8 @@ Agentic Skills provides **deep domain expertise and context engineering** — th
 - **[GSD (Get Stuff Done)](https://github.com/patrickjm/gsd-claude-code)** — Context engineering for Claude Code. Prevents context degradation via fresh-context-per-task spawning and aggressive task atomicity. *Agentic Skills enhances each spawned context with domain-specific knowledge and hooks that survive compaction.*
 
 **What only Agentic Skills provides:**
-- 26 production-grade skill guides with decision trees, anti-patterns, and checklists
-- 10 specialized agents (`@software-architect`, `@security-auditor`, etc.)
+- Production-grade skill guides with decision trees, anti-patterns, and checklists
+- Specialized agents (`@software-architect`, `@security-auditor`, etc.)
 - 7 deterministic command hooks — transcript backup, context injection, lint-on-write, rm -rf guard, error logging
 
 ## Contributing

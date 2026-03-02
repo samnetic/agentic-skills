@@ -7,7 +7,7 @@ Use `install.sh` from a target project to copy skills/agents/hooks for supported
 ## Repository Structure
 
 ```
-skills/           → 26 skill directories, each containing SKILL.md (npx distribution root)
+skills/           → skill directories, each containing SKILL.md (npx distribution root)
 agents/           → 10 agent .md files
 .claude/          → Mirror of skills + agents + hooks (for local development)
 .claude/hooks/    → 7 bash command hook scripts
@@ -21,7 +21,7 @@ scripts/          → release helpers (formula rendering, release metadata check
 CHANGELOG.md      → Release history
 ```
 
-## Available Skills (26)
+## Available Skills
 
 | Skill | Lines | Triggers |
 |-------|-------|----------|

@@ -66,6 +66,9 @@ check_version() {
 
 run() {
   echo "== cli smoke =="
+  local expected_skills expected_agents
+  expected_skills="$(find "$ROOT_DIR/skills" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
+  expected_agents="$(find "$ROOT_DIR/agents" -maxdepth 1 -name '*.md' -type f | wc -l | tr -d ' ')"
 
   assert_cmd claude
   assert_cmd codex
@@ -80,7 +83,7 @@ run() {
   local codex_skill_count codex_agent_count
   codex_skill_count="$(find .codex/skills -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
   codex_agent_count="$(find .codex/agents -maxdepth 1 -name '*.md' -type f | wc -l | tr -d ' ')"
-  if [[ "$codex_skill_count" == "25" && "$codex_agent_count" == "9" ]]; then
+  if [[ "$codex_skill_count" == "$expected_skills" && "$codex_agent_count" == "$expected_agents" ]]; then
     pass "codex project install created skills/agents registry files"
   else
     fail "codex project install created skills/agents registry files"

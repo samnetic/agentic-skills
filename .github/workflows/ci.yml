@@ -18,11 +18,19 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - name: Shell syntax checks
         run: |
           bash -n install.sh uninstall.sh agentic-skills.sh
           bash -n tests/smoke-installer.sh tests/smoke-manager.sh tests/run-all.sh
           bash -n scripts/render-homebrew-formula.sh scripts/verify-release-metadata.sh
+
+      - name: Internal skills quality gate
+        run: npm run skills:quality
 
       - name: Installer smoke tests
         run: bash tests/smoke-installer.sh

@@ -66,6 +66,9 @@ assert_contains() {
 run() {
   echo "== installer smoke in $TMP_DIR =="
   cd "$TMP_DIR"
+  local expected_skills expected_agents
+  expected_skills="$(find "$ROOT_DIR/skills" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
+  expected_agents="$(find "$ROOT_DIR/agents" -maxdepth 1 -name '*.md' -type f | wc -l | tr -d ' ')"
 
   bash "$ROOT_DIR/install.sh" --claude --force >/tmp/agentic-skills-smoke-claude-install.log
   bash "$ROOT_DIR/install.sh" --opencode --force >/tmp/agentic-skills-smoke-opencode-install.log
@@ -74,11 +77,11 @@ run() {
 
   local claude_skills
   claude_skills="$(find .claude/skills -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
-  assert_eq "$claude_skills" "25" "Claude install skill count"
+  assert_eq "$claude_skills" "$expected_skills" "Claude install skill count"
 
   local claude_agents
   claude_agents="$(find .claude/agents -maxdepth 1 -name '*.md' -type f | wc -l | tr -d ' ')"
-  assert_eq "$claude_agents" "9" "Claude install agent count"
+  assert_eq "$claude_agents" "$expected_agents" "Claude install agent count"
 
   local claude_hooks
   claude_hooks="$(find .claude/hooks -maxdepth 1 -name '*.sh' -type f | wc -l | tr -d ' ')"
@@ -105,11 +108,11 @@ run() {
 
   local opencode_skills
   opencode_skills="$(find .opencode/skills -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
-  assert_eq "$opencode_skills" "25" "OpenCode install skill count"
+  assert_eq "$opencode_skills" "$expected_skills" "OpenCode install skill count"
 
   local opencode_agents
   opencode_agents="$(find .opencode/agents -maxdepth 1 -name '*.md' -type f | wc -l | tr -d ' ')"
-  assert_eq "$opencode_agents" "9" "OpenCode install agent count"
+  assert_eq "$opencode_agents" "$expected_agents" "OpenCode install agent count"
 
   local opencode_plugins
   opencode_plugins="$(find .opencode/plugins -maxdepth 1 -name '*.js' -type f | wc -l | tr -d ' ')"
@@ -146,11 +149,11 @@ run() {
 
   local codex_skills
   codex_skills="$(find .codex/skills -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
-  assert_eq "$codex_skills" "25" "Codex install skill count"
+  assert_eq "$codex_skills" "$expected_skills" "Codex install skill count"
 
   local codex_agents
   codex_agents="$(find .codex/agents -maxdepth 1 -name '*.md' -type f | wc -l | tr -d ' ')"
-  assert_eq "$codex_agents" "9" "Codex install agent count"
+  assert_eq "$codex_agents" "$expected_agents" "Codex install agent count"
 
   mkdir -p codex-hooks-case
   (
@@ -184,7 +187,7 @@ run() {
   ' .codex/skills/nextjs-react/SKILL.md)"
   assert_le "$codex_desc_len" "1024" "Codex skill description is within parser limit"
 
-  assert_contains "codex.md" "25 expert-level domain skills + 9 specialized agents." "Codex markdown export summary has corrected skill count"
+  assert_contains "codex.md" "$expected_skills expert-level domain skills + $expected_agents specialized agents." "Codex markdown export summary has corrected skill count"
 
   if command -v jq >/dev/null 2>&1; then
     local opencode_target

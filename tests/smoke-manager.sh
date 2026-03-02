@@ -55,6 +55,8 @@ assert_contains() {
 run() {
   echo "== manager smoke in $TMP_DIR =="
   cd "$TMP_DIR"
+  local expected_skills
+  expected_skills="$(find "$ROOT_DIR/skills" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
 
   local release_version
   release_version="$(node -p "require('$ROOT_DIR/package.json').version")"
@@ -74,7 +76,7 @@ run() {
   bash "$ROOT_DIR/agentic-skills.sh" install --claude --skills-only --force >/tmp/agentic-skills-manager-claude-install.log
 
   if command -v jq >/dev/null 2>&1; then
-    assert_eq "$(jq -r '.skills | length' .claude/.agentic-skills.manifest)" "25" "Skills-only manifest skills count"
+    assert_eq "$(jq -r '.skills | length' .claude/.agentic-skills.manifest)" "$expected_skills" "Skills-only manifest skills count"
     assert_eq "$(jq -r '.agents | length' .claude/.agentic-skills.manifest)" "0" "Skills-only manifest agents count"
     assert_eq "$(jq -r '.hooks' .claude/.agentic-skills.manifest)" "false" "Skills-only manifest hooks flag"
   else
@@ -84,14 +86,14 @@ run() {
   local status_out
   status_out="$(mktemp)"
   bash "$ROOT_DIR/agentic-skills.sh" status --path .claude >"$status_out"
-  assert_contains "$status_out" "Components: skills=25 agents=0 hooks=false" "Status reflects skills-only install"
+  assert_contains "$status_out" "Components: skills=$expected_skills agents=0 hooks=false" "Status reflects skills-only install"
   rm -f "$status_out"
 
   if [[ -x "$ROOT_DIR/bin/agentic-skills" ]]; then
     local bin_status_out
     bin_status_out="$(mktemp)"
     "$ROOT_DIR/bin/agentic-skills" status --path .claude >"$bin_status_out"
-    assert_contains "$bin_status_out" "Components: skills=25 agents=0 hooks=false" "Packaged bin wrapper works"
+    assert_contains "$bin_status_out" "Components: skills=$expected_skills agents=0 hooks=false" "Packaged bin wrapper works"
     rm -f "$bin_status_out"
   else
     fail "Packaged bin wrapper exists"
@@ -102,14 +104,14 @@ run() {
 
   bash "$ROOT_DIR/agentic-skills.sh" update --path .claude --force >/tmp/agentic-skills-manager-claude-update.log
   if command -v jq >/dev/null 2>&1; then
-    assert_eq "$(jq -r '.skills | length' .claude/.agentic-skills.manifest)" "25" "Update keeps skills count"
+    assert_eq "$(jq -r '.skills | length' .claude/.agentic-skills.manifest)" "$expected_skills" "Update keeps skills count"
     assert_eq "$(jq -r '.agents | length' .claude/.agentic-skills.manifest)" "0" "Update keeps agents disabled"
     assert_eq "$(jq -r '.hooks' .claude/.agentic-skills.manifest)" "false" "Update keeps hooks disabled"
   fi
 
   bash "$ROOT_DIR/agentic-skills.sh" self-update --source "$ROOT_DIR" --path .claude --yes --force >/tmp/agentic-skills-manager-claude-self-update.log
   if command -v jq >/dev/null 2>&1; then
-    assert_eq "$(jq -r '.skills | length' .claude/.agentic-skills.manifest)" "25" "Self-update keeps skills count"
+    assert_eq "$(jq -r '.skills | length' .claude/.agentic-skills.manifest)" "$expected_skills" "Self-update keeps skills count"
     assert_eq "$(jq -r '.agents | length' .claude/.agentic-skills.manifest)" "0" "Self-update keeps agents disabled"
   fi
 
