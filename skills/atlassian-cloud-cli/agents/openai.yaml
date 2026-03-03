@@ -1,0 +1,4 @@
+interface:
+  display_name: "Atlassian Cloud CLI"
+  short_description: "Operate Jira and Confluence via terminal CLIs"
+  default_prompt: "Use this skill for Jira/Confluence work with acli and confluence-cli."
