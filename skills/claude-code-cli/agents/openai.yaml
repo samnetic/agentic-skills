@@ -1,0 +1,4 @@
+interface:
+  display_name: "Claude Code CLI"
+  short_description: "Control Claude Code from terminal and CI with strict flags"
+  default_prompt: "Use this skill for Claude Code CLI automation, model/tool controls, and MCP isolation."

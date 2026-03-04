@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gemini CLI"
+  short_description: "Operate Gemini CLI with headless, routing, and MCP controls"
+  default_prompt: "Use this skill for Gemini CLI automation, model routing, and strict tool/MCP control via CLI."

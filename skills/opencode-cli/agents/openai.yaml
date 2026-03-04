@@ -1,0 +1,4 @@
+interface:
+  display_name: "Opencode CLI"
+  short_description: "Operate OpenCode CLI with model, tool, and permission control"
+  default_prompt: "Use this skill for OpenCode CLI run/config/MCP workflows and safe automation patterns."

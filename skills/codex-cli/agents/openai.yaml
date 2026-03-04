@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex CLI"
+  short_description: "Use Codex CLI safely with explicit sandbox and JSON contracts"
+  default_prompt: "Use this skill for Codex CLI model/config/sandbox/MCP control and non-interactive automation."
