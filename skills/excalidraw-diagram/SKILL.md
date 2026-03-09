@@ -46,6 +46,10 @@ If the user does not specify depth, infer it:
 - Mermaid one-command pipeline: [scripts/mermaid_pipeline.sh](scripts/mermaid_pipeline.sh)
 - Structure lint script: [scripts/lint_excalidraw.py](scripts/lint_excalidraw.py)
 - PNG render script: [scripts/render_excalidraw.py](scripts/render_excalidraw.py)
+- Live preview editor: [scripts/preview.sh](scripts/preview.sh)
+- Scene description (AI-readable): [scripts/describe_scene.py](scripts/describe_scene.py)
+- Preview API server: [scripts/preview_server.mjs](scripts/preview_server.mjs)
+- Docker image: [scripts/Dockerfile](scripts/Dockerfile)
 
 ## Execution Protocol
 
@@ -136,7 +140,30 @@ Run deterministic checks first, then visual checks:
 
 Use [references/quality-checklist.md](references/quality-checklist.md) as stop criteria.
 
-### 7) Deliver
+### 7) Live Preview (Optional)
+
+Launch an interactive Excalidraw editor for collaborative editing with the user:
+
+```bash
+bash scripts/preview.sh path/to/diagram.excalidraw --open
+```
+
+This starts a full Excalidraw React app with bidirectional file sync:
+- Agent edits the `.excalidraw` file on disk → browser auto-updates (~1s).
+- User edits in the browser → file on disk auto-saves (~2s).
+- Dependencies auto-install on first run.
+
+Alternatively, use Docker (no local Node.js required):
+
+```bash
+cd scripts && docker build -t excalidraw-preview .
+docker run -p 8091:8091 -v /path/to/diagram.excalidraw:/data/diagram.excalidraw excalidraw-preview
+```
+
+Use `python scripts/describe_scene.py path/to/diagram.excalidraw` to get an AI-readable
+summary of the current scene (element types, labels, connections, bounds).
+
+### 8) Deliver
 
 Return final artifacts and the short rationale:
 
