@@ -97,6 +97,32 @@ equivalent restriction.
 `confluence-cli comments <pageId> --limit 50 --format markdown`
 `confluence-cli property-set <pageId> sync-state --file ./state.json --format json`
 
+### Embedding images in Confluence pages
+
+`confluence-cli` markdown format does **not** convert `![](filename)` to inline
+images. Uploaded attachments must be embedded via Confluence storage format.
+
+**Workflow:**
+
+1. Upload the image as an attachment:
+`confluence-cli attachment-upload <pageId> --file ./diagram.png`
+2. Embed it in the page using the REST API to inject storage-format XML:
+
+```xml
+<ac:image ac:align="center" ac:layout="center" ac:custom-width="true" ac:width="760">
+  <ri:attachment ri:filename="diagram.png" />
+</ac:image>
+```
+
+3. To inject this, fetch the current page body via REST API
+(`GET /wiki/rest/api/content/<pageId>?expand=body.storage`), insert the
+`<ac:image>` tag at the desired location, then update via REST API
+(`PUT /wiki/rest/api/content/<pageId>` with the new `body.storage.value`).
+
+**Alternative:** Upload the attachment, then manually insert it via the
+Confluence editor UI (`+` → Image → select attached file). This is simpler for
+one-off insertions.
+
 ## Output Contract
 
 For every task, return:
