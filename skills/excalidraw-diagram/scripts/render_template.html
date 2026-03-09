@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #ffffff;
+      overflow: hidden;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    #root {
+      display: inline-block;
+    }
+
+    #root svg {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module">
+    window.__moduleReady = false;
+    window.__moduleError = null;
+    window.__renderComplete = false;
+    window.__renderError = null;
+
+    let exportToSvgFn = null;
+
+    try {
+      const excalidraw = await import("https://esm.sh/@excalidraw/excalidraw?bundle");
+      exportToSvgFn = excalidraw.exportToSvg;
+      if (!exportToSvgFn) {
+        throw new Error("exportToSvg not found in @excalidraw/excalidraw module");
+      }
+      window.__moduleReady = true;
+    } catch (error) {
+      window.__moduleError = String(error?.message || error);
+    }
+
+    window.renderDiagram = async function renderDiagram(payload) {
+      window.__renderComplete = false;
+      window.__renderError = null;
+
+      try {
+        if (!window.__moduleReady || !exportToSvgFn) {
+          throw new Error(window.__moduleError || "Excalidraw module is not ready");
+        }
+
+        const data = typeof payload === "string" ? JSON.parse(payload) : payload;
+        const elements = Array.isArray(data?.elements) ? data.elements : [];
+        const appState = typeof data?.appState === "object" && data?.appState !== null ? data.appState : {};
+        const files = typeof data?.files === "object" && data?.files !== null ? data.files : {};
+
+        appState.viewBackgroundColor = appState.viewBackgroundColor || "#ffffff";
+        appState.exportWithDarkMode = false;
+
+        const svg = await exportToSvgFn({
+          elements,
+          appState: {
+            ...appState,
+            exportBackground: true,
+          },
+          files,
+        });
+
+        const root = document.getElementById("root");
+        root.innerHTML = "";
+        root.appendChild(svg);
+
+        const viewBox = svg.getAttribute("viewBox");
+        window.__renderComplete = true;
+        return {
+          success: true,
+          width: svg.getAttribute("width"),
+          height: svg.getAttribute("height"),
+          viewBox,
+        };
+      } catch (error) {
+        window.__renderComplete = true;
+        window.__renderError = String(error?.message || error);
+        return { success: false, error: window.__renderError };
+      }
+    };
+  </script>
+</body>
+</html>
+

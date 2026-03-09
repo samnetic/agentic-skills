@@ -1,0 +1,14 @@
+{
+  "name": "excalidraw-diagram-tools",
+  "private": true,
+  "type": "module",
+  "description": "Local tooling for Excalidraw diagram skill",
+  "scripts": {
+    "mermaid:convert": "node mermaid_to_excalidraw.mjs",
+    "mermaid:pipeline": "bash mermaid_pipeline.sh"
+  },
+  "dependencies": {
+    "@excalidraw/excalidraw": "^0.18.0",
+    "@excalidraw/mermaid-to-excalidraw": "^1.1.0"
+  }
+}

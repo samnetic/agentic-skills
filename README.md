@@ -262,6 +262,7 @@ Installs skills only (no agents or hooks) into `.claude/skills/` in the current 
 | `code-review` | 620+ | Severity-labeled feedback, review checklists, PR templates, review automation |
 | `technical-writing` | 1680+ | Diátaxis, README templates, API docs, JSDoc/TSDoc, ADRs, changelogs, runbooks, onboarding |
 | `docker-production` | 620+ | Multi-stage builds, security hardening, compose patterns, container scanning |
+| `excalidraw-diagram` | 160+ | Visual-argument Excalidraw diagrams with optional Mermaid bootstrap, sectioned JSON generation, semantic palettes, lint checks, and PNG render validation loop |
 
 ## Agents (10)
 

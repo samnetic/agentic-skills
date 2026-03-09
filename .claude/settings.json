@@ -1,0 +1,81 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git ls-files:*)",
+      "Bash(git check-ignore:*)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -x \"$CLAUDE_PROJECT_DIR/.claude/hooks/stop.sh\" ]; then bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/stop.sh\"; elif [ -x \"$HOME/.claude/hooks/stop.sh\" ]; then bash \"$HOME/.claude/hooks/stop.sh\"; fi"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -x \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.sh\" ]; then bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-start.sh\"; elif [ -x \"$HOME/.claude/hooks/session-start.sh\" ]; then bash \"$HOME/.claude/hooks/session-start.sh\"; fi"
+          }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -x \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-start-compact.sh\" ]; then bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-start-compact.sh\"; elif [ -x \"$HOME/.claude/hooks/session-start-compact.sh\" ]; then bash \"$HOME/.claude/hooks/session-start-compact.sh\"; fi"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -x \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre-compact.sh\" ]; then bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre-compact.sh\"; elif [ -x \"$HOME/.claude/hooks/pre-compact.sh\" ]; then bash \"$HOME/.claude/hooks/pre-compact.sh\"; fi"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -x \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre-tool-use.sh\" ]; then bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre-tool-use.sh\"; elif [ -x \"$HOME/.claude/hooks/pre-tool-use.sh\" ]; then bash \"$HOME/.claude/hooks/pre-tool-use.sh\"; fi"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -x \"$CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use.sh\" ]; then bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use.sh\"; elif [ -x \"$HOME/.claude/hooks/post-tool-use.sh\" ]; then bash \"$HOME/.claude/hooks/post-tool-use.sh\"; fi"
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -x \"$CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use-failure.sh\" ]; then bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use-failure.sh\"; elif [ -x \"$HOME/.claude/hooks/post-tool-use-failure.sh\" ]; then bash \"$HOME/.claude/hooks/post-tool-use-failure.sh\"; fi"
+          }
+        ]
+      }
+    ]
+  }
+}
