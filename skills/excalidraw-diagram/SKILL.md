@@ -12,6 +12,17 @@ description: >-
 
 Create diagrams that argue visually, not just labeled boxes.
 
+## Core Principles
+
+| Principle | Meaning |
+|-----------|---------|
+| Visual argument first | Every diagram defends a claim; layout, grouping, and flow encode meaning beyond labels |
+| Structure mirrors behavior | Choose visual patterns that reflect how the system actually works, not uniform grids |
+| Concrete over abstract | Prefer real names, real payloads, and real flows; avoid placeholders in technical diagrams |
+| Progressive refinement | Build section-by-section, validate after each pass; never one-shot large diagrams |
+| Semantic color | Colors carry meaning (success, warning, data flow); never decorative-only |
+| Render-verified delivery | No diagram is done until it has been rendered to PNG and visually inspected |
+
 ## Workflow
 
 1. Classify diagram depth (`simple` or `comprehensive`).
@@ -33,23 +44,47 @@ If the user does not specify depth, infer it:
 - `simple`: mental models, quick overviews, conceptual explanations.
 - `comprehensive`: technical systems, tutorials, protocols, educational assets.
 
+## Decision Tree — Choosing Diagram Approach
+
+```
+Start
+ ├─ Is the concept mostly a flow/sequence/graph?
+ │   ├─ YES → Consider Mermaid bootstrap (step 3)
+ │   │        └─ Then refactor layout with visual argument rules
+ │   └─ NO  → Skip Mermaid, go direct to JSON
+ │
+ ├─ Does the diagram need >15 elements or multiple sections?
+ │   ├─ YES → Use comprehensive depth + section-by-section build
+ │   └─ NO  → Use simple depth + single-pass build
+ │
+ ├─ Is the subject a real protocol/API/system?
+ │   ├─ YES → Research first: gather real names, payloads, flows
+ │   └─ NO  → Conceptual mapping is sufficient
+ │
+ └─ Does the user want live collaboration?
+     ├─ YES → Launch preview editor (step 7) alongside build
+     └─ NO  → Deliver static .excalidraw + PNG
+```
+
 ## Progressive Disclosure Map
 
-- Palette and brand tokens: [references/color-palette.md](references/color-palette.md)
-- Pattern catalog: [references/visual-patterns.md](references/visual-patterns.md)
-- Excalidraw JSON contract: [references/json-schema.md](references/json-schema.md)
-- JSON snippets/templates: [references/element-templates.md](references/element-templates.md)
-- Validation rubric: [references/quality-checklist.md](references/quality-checklist.md)
-- Mermaid bootstrap workflow: [references/mermaid-bootstrap.md](references/mermaid-bootstrap.md)
-- Renderer setup and troubleshooting: [references/renderer-setup.md](references/renderer-setup.md)
-- Mermaid conversion script: [scripts/mermaid_to_excalidraw.mjs](scripts/mermaid_to_excalidraw.mjs)
-- Mermaid one-command pipeline: [scripts/mermaid_pipeline.sh](scripts/mermaid_pipeline.sh)
-- Structure lint script: [scripts/lint_excalidraw.py](scripts/lint_excalidraw.py)
-- PNG render script: [scripts/render_excalidraw.py](scripts/render_excalidraw.py)
-- Live preview editor: [scripts/preview.sh](scripts/preview.sh)
-- Scene description (AI-readable): [scripts/describe_scene.py](scripts/describe_scene.py)
-- Preview API server: [scripts/preview_server.mjs](scripts/preview_server.mjs)
-- Docker image: [scripts/Dockerfile](scripts/Dockerfile)
+| Resource | Path | When to read |
+|----------|------|--------------|
+| Palette and brand tokens | [references/color-palette.md](references/color-palette.md) | Before choosing colors for any element |
+| Pattern catalog | [references/visual-patterns.md](references/visual-patterns.md) | During step 4 (Plan the Visual Argument) |
+| Excalidraw JSON contract | [references/json-schema.md](references/json-schema.md) | Before writing or editing any JSON |
+| JSON snippets/templates | [references/element-templates.md](references/element-templates.md) | When constructing elements in JSON |
+| Validation rubric | [references/quality-checklist.md](references/quality-checklist.md) | During step 6 (Validate) as stop criteria |
+| Mermaid bootstrap workflow | [references/mermaid-bootstrap.md](references/mermaid-bootstrap.md) | Only when using the Mermaid bootstrap path |
+| Renderer setup | [references/renderer-setup.md](references/renderer-setup.md) | First render attempt or on render errors |
+| Mermaid conversion script | [scripts/mermaid_to_excalidraw.mjs](scripts/mermaid_to_excalidraw.mjs) | When converting .mmd to .excalidraw |
+| Mermaid one-command pipeline | [scripts/mermaid_pipeline.sh](scripts/mermaid_pipeline.sh) | Quick Mermaid-to-PNG in one step |
+| Structure lint script | [scripts/lint_excalidraw.py](scripts/lint_excalidraw.py) | Every validation pass (step 6) |
+| PNG render script | [scripts/render_excalidraw.py](scripts/render_excalidraw.py) | Every validation pass (step 6) |
+| Live preview editor | [scripts/preview.sh](scripts/preview.sh) | When user wants interactive editing |
+| Scene description (AI) | [scripts/describe_scene.py](scripts/describe_scene.py) | To inspect scene without rendering |
+| Preview API server | [scripts/preview_server.mjs](scripts/preview_server.mjs) | Launched automatically by preview.sh |
+| Docker image | [scripts/Dockerfile](scripts/Dockerfile) | When running preview without local Node.js |
 
 ## Execution Protocol
 
@@ -196,6 +231,27 @@ Every response should include:
 - Composition is balanced (no crowded/empty extremes).
 - For comprehensive diagrams, section-by-section build strategy was used.
 - If Mermaid bootstrap was used, final design is meaningfully refined beyond default conversion output.
+
+## Checklist
+
+Use before declaring a diagram complete:
+
+- [ ] Depth classification (`simple`/`comprehensive`) recorded
+- [ ] Visual argument plan written before JSON construction
+- [ ] Pattern selection justified (not default box grid)
+- [ ] Colors pulled from palette reference, used semantically
+- [ ] All arrow bindings valid (startBinding/endBinding resolve to real IDs)
+- [ ] Container bindings correct (containerId on children, boundElements on parents)
+- [ ] IDs are descriptive strings, not random UUIDs
+- [ ] Text readable at export scale, no clipping or overflow
+- [ ] Structure lint passes with zero errors
+- [ ] PNG rendered and visually inspected at least once
+- [ ] No overlapping elements or ambiguous label anchoring
+- [ ] Composition balanced (no crowded or empty regions)
+- [ ] For comprehensive: section-by-section build strategy was used
+- [ ] For Mermaid bootstrap: output meaningfully refined beyond raw conversion
+- [ ] Evidence artifacts (code, payloads, sequences) included for technical diagrams
+- [ ] Output contract items delivered (JSON path, PNG path, summary, validation log)
 
 ## Anti-Patterns
 

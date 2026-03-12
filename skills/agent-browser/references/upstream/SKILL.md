@@ -6,6 +6,39 @@ allowed-tools: Bash(npx agent-browser:*), Bash(agent-browser:*)
 
 # Browser Automation with agent-browser
 
+## Table of Contents
+
+- [Core Workflow](#core-workflow)
+- [Command Chaining](#command-chaining)
+- [Essential Commands](#essential-commands)
+- [Common Patterns](#common-patterns)
+  - [Form Submission](#form-submission)
+  - [Authentication with Auth Vault (Recommended)](#authentication-with-auth-vault-recommended)
+  - [Authentication with State Persistence](#authentication-with-state-persistence)
+  - [Session Persistence](#session-persistence)
+  - [Data Extraction](#data-extraction)
+  - [Parallel Sessions](#parallel-sessions)
+  - [Connect to Existing Chrome](#connect-to-existing-chrome)
+  - [Color Scheme (Dark Mode)](#color-scheme-dark-mode)
+  - [Visual Browser (Debugging)](#visual-browser-debugging)
+  - [Local Files (PDFs, HTML)](#local-files-pdfs-html)
+  - [iOS Simulator (Mobile Safari)](#ios-simulator-mobile-safari)
+- [Security](#security)
+  - [Content Boundaries (Recommended for AI Agents)](#content-boundaries-recommended-for-ai-agents)
+  - [Domain Allowlist](#domain-allowlist)
+  - [Action Policy](#action-policy)
+  - [Output Limits](#output-limits)
+- [Diffing (Verifying Changes)](#diffing-verifying-changes)
+- [Timeouts and Slow Pages](#timeouts-and-slow-pages)
+- [Session Management and Cleanup](#session-management-and-cleanup)
+- [Ref Lifecycle (Important)](#ref-lifecycle-important)
+- [Annotated Screenshots (Vision Mode)](#annotated-screenshots-vision-mode)
+- [Semantic Locators (Alternative to Refs)](#semantic-locators-alternative-to-refs)
+- [JavaScript Evaluation (eval)](#javascript-evaluation-eval)
+- [Configuration File](#configuration-file)
+- [Deep-Dive Documentation](#deep-dive-documentation)
+- [Ready-to-Use Templates](#ready-to-use-templates)
+
 ## Core Workflow
 
 Every browser automation follows this pattern:

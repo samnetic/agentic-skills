@@ -17,6 +17,21 @@ description: >-
 Use this skill to operate Gemini CLI as a controlled runtime for both interactive
 and automation-heavy workflows.
 
+---
+
+## Core Principles
+
+| Principle | Meaning |
+|---|---|
+| **Feature-detect before use** | Always run `gemini --help` and compare against docs; never assume a flag exists |
+| **Headless by default** | Prefer one-shot `gemini "<prompt>"` with explicit `--output-format` for reproducibility |
+| **Settings over flags** | When a CLI flag is missing locally, fall back to `settings.json` equivalents |
+| **Least-privilege execution** | Default to `--sandbox` and restrictive `--approval-mode`; escalate only when asked |
+| **Version-pinned recipes** | Record CLI version + detected capabilities alongside every non-trivial command |
+| **Explicit output contracts** | Always specify `--output-format text|json|stream-json`; never rely on implicit defaults |
+
+---
+
 ## Workflow
 
 1. Run preflight:
@@ -41,9 +56,12 @@ interactive (`gemini`) or headless one-shot (`gemini "<prompt>"`).
 9. Execute and return:
 exact command(s), selected controls, and observed output/errors.
 
-Load details from:
-- [references/capabilities.md](references/capabilities.md)
-- [references/tested-behavior.md](references/tested-behavior.md)
+### Progressive Disclosure Map
+
+| Reference | When to read |
+|---|---|
+| [references/capabilities.md](references/capabilities.md) | Before using any docs-only flag; when comparing local vs latest feature surface |
+| [references/tested-behavior.md](references/tested-behavior.md) | When debugging unexpected errors, permission issues, or CI sandbox failures |
 
 ## Quick Start
 
@@ -158,3 +176,54 @@ Return:
 - Do not use `--approval-mode yolo` unless explicitly requested.
 - Do not trust MCP servers by default (`--trust`) unless user approved.
 - Do not assume docs-latest command availability on older local binaries.
+
+---
+
+## Anti-Patterns
+
+| Anti-Pattern | Why It's Dangerous | Fix |
+|---|---|---|
+| **Using docs-only flags without detection** | Command fails silently or errors on older CLI versions | Run `gemini --help` or the capability detector script first |
+| **Omitting `--output-format`** | Output format is unpredictable across versions; breaks automation parsing | Always pass `--output-format text\|json\|stream-json` explicitly |
+| **`--approval-mode yolo` by default** | Grants unrestricted tool execution; may modify filesystem or run arbitrary commands | Default to `default`; only escalate to `yolo` when the user explicitly requests it |
+| **Passing `--trust` to MCP add** | Auto-approves all tool calls from an external server without user review | Omit `--trust`; use `--include-tools` / `--exclude-tools` to scope access |
+| **Combining `--prompt` with positional args** | Parser rejects the combination; command fails immediately | Use positional prompt only (`gemini "<prompt>"`); drop deprecated `-p` |
+| **Hardcoding model names without fallback** | Model unavailable or quota-exhausted returns an error with no recovery | Configure `fallbackModel` in settings or implement retry with alternate model |
+| **Running headless without writable `~/.gemini`** | `EACCES` on chat directory creation kills the run | Set `HOME=/tmp` or `GEMINI_CLI_HOME` to a writable path in CI/sandbox |
+| **Ignoring version drift** | Recipes break when copied between machines with different CLI versions | Pin CLI version in CI; always record version in output contract |
+
+---
+
+## Checklist
+
+### Pre-Execution
+
+- [ ] Run `gemini --version` to confirm CLI is installed and record version
+- [ ] Run `gemini --help` to detect locally available flags and commands
+- [ ] Run capability detector script if using non-trivial flags
+- [ ] Confirm `~/.gemini` (or `GEMINI_CLI_HOME`) is writable; set `HOME` override for CI if needed
+- [ ] Verify network/auth reachability for Gemini API endpoints
+
+### Command Construction
+
+- [ ] Use positional prompt style (`gemini "<prompt>"`) — not deprecated `-p`
+- [ ] Specify `--output-format` explicitly (`text`, `json`, or `stream-json`)
+- [ ] Set `--model` or configure model routing in settings
+- [ ] Apply `--sandbox` for untrusted workloads
+- [ ] Set `--approval-mode default` unless escalation is justified
+- [ ] Scope tools with `--allowed-tools` and MCP servers with `--allowed-mcp-server-names`
+
+### MCP Integration
+
+- [ ] Add MCP servers with `gemini mcp add` and verify with `gemini mcp list`
+- [ ] Use `--include-tools` / `--exclude-tools` to restrict server capabilities
+- [ ] Do not pass `--trust` unless user explicitly approves
+- [ ] Verify `update`/`test`/`import`/`export` subcommands exist locally before using
+
+### Post-Execution
+
+- [ ] Record exact command(s) executed in output
+- [ ] Include CLI version and detected capability set
+- [ ] Document model, routing, sandbox, and tool controls applied
+- [ ] Note output format and parse strategy used
+- [ ] Report success/error result and any fallback actions taken

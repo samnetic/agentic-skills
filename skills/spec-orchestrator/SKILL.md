@@ -14,6 +14,17 @@ description: >-
 Route each request to the minimum set of spec/document skills needed to produce
 audience-fit, decision-ready artifacts.
 
+## Core Principles
+
+| Principle | Meaning |
+|---|---|
+| Audience-first | Every artifact targets one primary reader; secondary audiences get appendices, not separate docs |
+| Decision-ready | A spec exists to enable a specific decision; if no decision is clearer after reading, the spec failed |
+| Minimum viable scope | Include only what the audience needs to decide; defer everything else to appendices or follow-ups |
+| Testable requirements | Every FR has acceptance criteria; every NFR has a numeric target and validation method |
+| Explicit routing | State which skill leads and why before drafting begins; never drift between routes mid-document |
+| Budget discipline | Agree on word/page budget up-front; compress ruthlessly during the quality pass |
+
 ## Workflow
 
 1. Identify artifact type, audience, and decision purpose.
@@ -32,10 +43,12 @@ audience-fit, decision-ready artifacts.
 
 ## Progressive Disclosure Map
 
-- Routing matrix: [references/routing-matrix.md](references/routing-matrix.md)
-- Artifact contracts: [references/artifact-output-contracts.md](references/artifact-output-contracts.md)
-- Clarification questions: [references/clarification-questions.md](references/clarification-questions.md)
-- Quality review checklist: [references/cross-skill-quality-checklist.md](references/cross-skill-quality-checklist.md)
+| Reference | Path | When to read |
+|---|---|---|
+| Routing matrix | [references/routing-matrix.md](references/routing-matrix.md) | At start of every request to select the correct route |
+| Artifact contracts | [references/artifact-output-contracts.md](references/artifact-output-contracts.md) | After route selection to load required sections for the artifact type |
+| Clarification questions | [references/clarification-questions.md](references/clarification-questions.md) | When critical inputs are missing and you need targeted questions |
+| Quality review checklist | [references/cross-skill-quality-checklist.md](references/cross-skill-quality-checklist.md) | Before delivering any final artifact to verify all gates pass |
 
 ## Execution Protocol
 
@@ -96,6 +109,74 @@ When asked for “full pack”, deliver in this order:
 - Content fits the target audience and selected depth.
 - Document stays within target word budget.
 - No unresolved critical ambiguity is hidden in prose.
+
+## Spec Template Example
+
+Use this skeleton when producing a PRD. Adapt sections per the artifact contract
+for other document types.
+
+```markdown
+# PRD: [Feature Name]
+
+## Meta
+- **Audience:** [exec | product | engineering | architecture-review]
+- **Decision goal:** [What this document should enable the reader to decide]
+- **Route:** [BA-led | Architecture-led | Writing-led]
+- **Word budget:** [e.g., 1500 words]
+- **Status:** [Draft | Review | Approved]
+
+## 1. Problem & Outcome
+[2-3 sentences: what pain exists, what success looks like]
+
+## 2. Scope
+| In scope | Out of scope |
+|----------|-------------|
+| Item A   | Item X      |
+| Item B   | Item Y      |
+
+## 3. Functional Requirements
+| ID    | Requirement           | Acceptance Criteria              | Priority |
+|-------|-----------------------|----------------------------------|----------|
+| FR-01 | User can reset password | Email sent within 30 s; link expires in 1 h | Must |
+| FR-02 | ...                   | ...                              | Should   |
+
+## 4. Non-Functional Requirements
+| ID     | Category    | Target          | Validation Method       |
+|--------|-------------|-----------------|-------------------------|
+| NFR-01 | Latency     | p95 < 200 ms    | Load test (k6, 500 RPS) |
+| NFR-02 | Availability | 99.9 % monthly  | Uptime monitor          |
+
+## 5. Dependencies, Risks & Assumptions
+- **Dependency:** Auth service v2 API must be deployed first.
+- **Risk:** Third-party email provider SLA is 99.5 %.
+- **Assumption:** Existing user table schema is unchanged.
+
+## 6. Success Metrics
+| Metric              | Baseline | Target | Measurement        |
+|---------------------|----------|--------|--------------------|
+| Password reset rate | 12 %     | 25 %   | Analytics dashboard |
+
+## 7. Next Actions
+| Action                  | Owner       | Horizon    |
+|-------------------------|-------------|------------|
+| Engineering sizing      | Tech Lead   | Sprint +1  |
+| Security review         | SecOps      | Sprint +1  |
+```
+
+## Delivery Checklist
+
+Run through before handing any artifact to the requester.
+
+- [ ] Route (BA / Architecture / Writing) is stated and justified
+- [ ] Primary audience and decision goal are in the document header
+- [ ] Scope table has both "in" and "out" columns filled
+- [ ] Every FR has an acceptance criterion
+- [ ] Every NFR has a numeric target and a validation method
+- [ ] Architecture options compared (at least two) when design decisions are present
+- [ ] Assumptions and open questions are surfaced, not buried in prose
+- [ ] Word count is within the agreed budget
+- [ ] Next-actions table includes owner and time horizon
+- [ ] Cross-skill quality checklist (reference file) passes with no blocking failures
 
 ## Anti-Patterns
 
