@@ -2,22 +2,21 @@
 name: typescript-engineering
 description: >-
   Advanced TypeScript development expertise. Use when writing TypeScript code, designing
-  type-safe APIs, creating advanced generic types, implementing branded/nominal types,
-  using discriminated unions, building type predicates and guards, configuring tsconfig.json,
-  setting up monorepo project references, choosing between interfaces vs types, using
-  utility types (Partial, Pick, Omit, Record, Readonly, Required, NoInfer), implementing the
-  builder pattern with types, creating type-safe event emitters, designing Zod schemas
-  with type inference, using Standard Schema for validation interop, optimizing TypeScript
-  compilation, implementing strict mode patterns, using the `using` keyword for resource
-  management, `satisfies` operator patterns, `const` type parameters, template literal types,
-  Effect-TS for typed errors, decorator metadata, generic React components, type-safe builder
-  pattern, erasable-syntax-only mode, iterator helpers, monorepo project references with
-  configDir, avoiding common TypeScript pitfalls, or reviewing TypeScript code quality.
+  type-safe APIs, creating generic types, implementing branded/nominal types, using
+  discriminated unions, building type guards, configuring tsconfig.json, setting up monorepo
+  project references, using utility types (Partial, Pick, Omit, Record, NoInfer), designing
+  Zod schemas with type inference, Standard Schema validation, strict mode patterns, the
+  `using` keyword, `satisfies` operator, `const` type parameters, template literal types,
+  Effect-TS for typed errors, generic React components, erasable-syntax-only mode, or
+  reviewing TypeScript code quality.
   Triggers: TypeScript, TS, type, generic, interface, tsconfig, strict mode, branded type,
-  discriminated union, type guard, type predicate, utility type, Zod, type inference,
-  monorepo, project references, type-safe, satisfies, using keyword, NoInfer, Standard Schema,
-  Effect-TS, template literal types, verbatimModuleSyntax, isolated declarations, decorator,
-  metadata, erasableSyntaxOnly, configDir, iterator helpers, builder pattern, generic component.
+  discriminated union, type guard, utility type, Zod, type inference, monorepo, project
+  references, type-safe, satisfies, NoInfer, Standard Schema, Effect-TS, template literal
+  types, decorator, builder pattern.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # TypeScript Engineering Skill

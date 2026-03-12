@@ -12,6 +12,10 @@ description: >-
   Triggers: bash, shell, script, sh, zsh, awk, sed, jq, grep, find, xargs, cron,
   systemd timer, entrypoint, provisioning, automation, CLI tool, ShellCheck, BATS,
   heredoc, trap, signal, process, pipeline, pipe, redirect, subprocess.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Bash Scripting Skill

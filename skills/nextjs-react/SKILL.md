@@ -2,21 +2,20 @@
 name: nextjs-react
 description: >-
   Next.js 15+ and React 19+ development expertise. Use when building Next.js applications
-  with App Router, implementing Server Components vs Client Components, using Server Actions
-  and form handling, designing data fetching and caching strategies with 'use cache' directive,
-  cacheLife() and cacheTag() APIs, implementing parallel routes and intercepting routes,
-  configuring streaming with Suspense, using useSearchParams with proper Suspense boundaries,
-  handling dynamic route params (Promise-based in Next.js 15), implementing ISR/SSG/SSR/PPR
-  strategies, using after() for post-response work, setting up middleware and instrumentation,
-  configuring next.config, working with React Server Components (RSC), React Compiler for
-  auto memoization, using the `use()` hook, `useOptimistic`, `useFormStatus`, implementing
-  error boundaries with forbidden()/unauthorized(), working with Turbopack, View Transitions,
-  TanStack Query, or reviewing Next.js code quality.
+  with App Router, implementing Server Components vs Client Components, using Server Actions,
+  designing caching strategies with 'use cache' directive, cacheLife() and cacheTag(),
+  implementing parallel and intercepting routes, streaming with Suspense, handling dynamic
+  route params, implementing ISR/SSG/SSR/PPR strategies, using after() for post-response
+  work, middleware, React Compiler, `useOptimistic`, `useFormStatus`, error boundaries with
+  forbidden()/unauthorized(), Turbopack, or reviewing Next.js code quality.
   Triggers: Next.js, nextjs, React, RSC, Server Component, Client Component, App Router,
-  Server Action, useSearchParams, Suspense, streaming, parallel routes, intercepting routes,
-  ISR, SSR, SSG, PPR, cache, use cache, cacheLife, cacheTag, revalidate, middleware, layout,
-  loading, error boundary, TanStack, after, instrumentation, React Compiler, useOptimistic,
-  useFormStatus, Turbopack, View Transitions, forbidden, unauthorized.
+  Server Action, Suspense, streaming, ISR, SSR, SSG, PPR, cache, use cache, revalidate,
+  middleware, layout, error boundary, TanStack, React Compiler, useOptimistic, Turbopack,
+  View Transitions.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Next.js & React Skill

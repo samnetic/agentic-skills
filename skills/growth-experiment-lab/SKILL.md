@@ -7,6 +7,10 @@ description: >-
   decision-grade readouts. Triggers: growth experiments, ICE, RICE, A/B test
   design, experimentation backlog, growth loop, conversion lift, experiment
   readout, hypothesis testing, growth strategy execution.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Growth Experiment Lab

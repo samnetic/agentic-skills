@@ -1,0 +1,92 @@
+{
+  "name": "agentic-skills",
+  "owner": {
+    "name": "samnetic",
+    "email": "samnetic@users.noreply.github.com"
+  },
+  "metadata": {
+    "description": "47 expert-level domain skills and 10 specialized agents for production engineering",
+    "version": "1.3.0"
+  },
+  "plugins": [
+    {
+      "name": "engineering-skills",
+      "description": "Core software engineering skills: TypeScript, Python, Node.js, Next.js/React, frontend development, REST API design, PostgreSQL, data modeling, Docker, DevOps/CI-CD, and performance optimization",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/typescript-engineering",
+        "./skills/python-engineering",
+        "./skills/nodejs-engineering",
+        "./skills/nextjs-react",
+        "./skills/frontend-development",
+        "./skills/rest-api-design",
+        "./skills/postgres-db",
+        "./skills/data-modeling",
+        "./skills/docker-production",
+        "./skills/devops-cicd",
+        "./skills/performance-optimization",
+        "./skills/bash-scripting",
+        "./skills/cloudflare",
+        "./skills/trigger-dev-self-hosted"
+      ]
+    },
+    {
+      "name": "quality-skills",
+      "description": "Code quality, testing, security, and architecture skills: code review, simplification, QA testing, debugging, security analysis, software architecture, observability, and Git workflows",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/code-review",
+        "./skills/code-simplification",
+        "./skills/qa-testing",
+        "./skills/debugging",
+        "./skills/security-analysis",
+        "./skills/software-architecture",
+        "./skills/observability",
+        "./skills/git-workflows",
+        "./skills/linux-server-hardening",
+        "./skills/auth-authz"
+      ]
+    },
+    {
+      "name": "business-skills",
+      "description": "Business, marketing, and content skills: business analysis, technical writing, copywriting, SEO, analytics, pricing strategy, growth experiments, and product marketing",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/business-analysis",
+        "./skills/technical-writing",
+        "./skills/copywriting",
+        "./skills/content-strategy",
+        "./skills/seo-audit",
+        "./skills/programmatic-seo",
+        "./skills/schema-markup",
+        "./skills/analytics-tracking",
+        "./skills/page-cro",
+        "./skills/pricing-strategy",
+        "./skills/growth-experiment-lab",
+        "./skills/launch-strategy",
+        "./skills/positioning-brand-system",
+        "./skills/product-marketing-context",
+        "./skills/startup-first-principles",
+        "./skills/spec-orchestrator"
+      ]
+    },
+    {
+      "name": "tooling-skills",
+      "description": "CLI and tooling skills for Claude Code, OpenCode, Codex, Gemini, Atlassian Cloud, Excalidraw diagrams, and browser automation",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/claude-code-cli",
+        "./skills/opencode-cli",
+        "./skills/codex-cli",
+        "./skills/gemini-cli",
+        "./skills/atlassian-cloud-cli",
+        "./skills/excalidraw-diagram",
+        "./skills/agent-browser"
+      ]
+    }
+  ]
+}

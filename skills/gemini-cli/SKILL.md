@@ -10,6 +10,11 @@ description: >-
   operation from terminal workflows. Triggers: gemini cli, gemini headless,
   gemini stream-json, gemini model routing, gemini fallback model, gemini mcp,
   gemini settings.json, GEMINI_SYSTEM_MD, gemini sandbox, pure llm gemini.
+license: MIT
+compatibility: Requires Gemini CLI (gemini)
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Gemini CLI

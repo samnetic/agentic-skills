@@ -4,15 +4,17 @@ description: >-
   Git version control and collaboration workflow expertise. Use when setting up branching
   strategies (trunk-based, GitFlow, GitHub Flow), writing conventional commits, configuring
   semantic versioning and automated releases, creating PR templates, setting up code owners,
-  configuring branch protection rules, resolving merge conflicts, performing interactive
-  rebase, writing .gitignore files, setting up git hooks (husky, lint-staged, lefthook),
-  reviewing PR quality, implementing squash-and-merge vs rebase workflows, managing monorepo
-  git strategies, cherry-picking, git bisect for debugging, configuring changesets for
-  monorepo versioning, setting up signed commits, or designing release processes.
+  branch protection rules, resolving merge conflicts, interactive rebase, writing .gitignore,
+  setting up git hooks (husky, lint-staged, lefthook), squash-and-merge vs rebase workflows,
+  monorepo git strategies, git bisect, changesets, or designing release processes.
   Triggers: git, branch, commit, merge, rebase, PR, pull request, code review, GitFlow,
-  trunk-based, conventional commits, semantic versioning, semver, release, tag, git hook,
-  husky, lint-staged, lefthook, .gitignore, CODEOWNERS, branch protection, cherry-pick,
-  bisect, merge conflict, squash, monorepo, changesets, signed commits.
+  trunk-based, conventional commits, semver, release, tag, git hook, husky, lint-staged,
+  .gitignore, CODEOWNERS, branch protection, cherry-pick, bisect, merge conflict, squash,
+  monorepo, changesets.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Git Workflows Skill

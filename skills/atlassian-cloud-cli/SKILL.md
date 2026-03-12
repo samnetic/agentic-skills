@@ -8,6 +8,11 @@ description: >-
   or Atlassian CLI auth troubleshooting and account switching. Triggers: jira,
   confluence, atlassian, acli, confluence-cli, jql, cql, work item triage,
   confluence docs automation, release notes sync.
+license: MIT
+compatibility: Requires acli (Atlassian CLI) and confluence-content-tools
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Atlassian Cloud CLI

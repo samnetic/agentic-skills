@@ -1,19 +1,22 @@
 ---
 name: docker-production
 description: >-
-  Enterprise-grade Docker containerization & production operations. Use whenever creating,
-  editing, reviewing, or fixing Dockerfiles, compose.yaml files, .dockerignore files,
-  containerizing any application, setting up CI/CD pipelines for Docker, configuring
-  reverse proxies, hardening Docker hosts, or planning deployment strategies.
-  Covers: multi-stage builds, Docker Hardened Images (DHI), all 13 OWASP Docker rules,
-  CIS Docker Benchmark, Docker Bake (HCL), multi-platform builds, Cosign image signing,
-  SBOM/SLSA attestations, supply chain security, Traefik v3/Caddy reverse proxy with TLS,
-  zero-downtime deployments (docker-rollout, blue-green), Docker socket proxy, graceful
-  shutdown/signal handling, daemon.json hardening, seccomp/AppArmor, auditd, rootless mode,
-  volume backup strategies, Prometheus/Grafana monitoring, structured logging, and
-  production runbooks. Triggers: Docker, Dockerfile, container, compose, containerize,
-  docker-compose, dockerize, image build, compose.yaml, CI/CD, deploy, reverse proxy,
-  Traefik, production, hardening, security scan.
+  Enterprise-grade Docker containerization and production operations. Use when creating,
+  editing, or reviewing Dockerfiles, compose.yaml, .dockerignore, containerizing
+  applications, setting up CI/CD for Docker, configuring reverse proxies, hardening
+  Docker hosts, or planning deployment strategies. Covers multi-stage builds, OWASP
+  Docker rules, CIS Docker Benchmark, Docker Bake, multi-platform builds, Cosign
+  signing, SBOM/SLSA attestations, Traefik v3/Caddy reverse proxy, zero-downtime
+  deployments, daemon.json hardening, seccomp/AppArmor, rootless mode, and production
+  runbooks.
+  Triggers: Docker, Dockerfile, container, compose, containerize, docker-compose,
+  dockerize, image build, compose.yaml, CI/CD, deploy, reverse proxy, Traefik,
+  production, hardening, security scan.
+license: MIT
+compatibility: Requires Docker Engine 24+
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Docker Production Skill

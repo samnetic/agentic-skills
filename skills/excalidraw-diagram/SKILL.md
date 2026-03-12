@@ -6,6 +6,11 @@ description: >-
   protocol, product, or educational diagrams from text, code, PDFs, transcripts,
   or research notes. Includes visual pattern mapping, section-by-section builds,
   render-based validation, and brand palette customization.
+license: MIT
+compatibility: Requires Docker for live preview server
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Excalidraw Diagram

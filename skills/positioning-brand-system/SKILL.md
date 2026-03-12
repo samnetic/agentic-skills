@@ -7,6 +7,10 @@ description: >-
   Triggers: branding, positioning, messaging, value proposition, ICP, category
   design, differentiation, brand voice, narrative, tagline, homepage message,
   founder story, go-to-market message.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Positioning Brand System

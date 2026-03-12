@@ -12,6 +12,10 @@ description: >-
   offset, error response, problem details, RFC 9457, rate limit, idempotency,
   webhook, OpenAPI, Swagger, GraphQL, tRPC, gRPC, HATEOAS, versioning, API key,
   OAuth, Bearer token, bulk operation, content negotiation, API documentation.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # REST API Design Skill

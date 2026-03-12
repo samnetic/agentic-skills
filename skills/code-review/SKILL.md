@@ -10,6 +10,10 @@ description: >-
   Triggers: code review, PR review, pull request review, review feedback, code smell,
   code quality, refactor suggestion, naming convention, dead code, complexity, review
   checklist, approve, request changes, nit, blocking.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Code Review Skill

@@ -8,6 +8,10 @@ description: >-
   into implementable specs. Triggers: PRD, requirements, functional
   requirements, non-functional requirements, business analyst, scope, backlog,
   user stories, acceptance criteria, KPI, prioritization, BA.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Business Analysis

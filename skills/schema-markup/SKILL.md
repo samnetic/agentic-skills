@@ -6,6 +6,10 @@ description: >-
   breadcrumb, organization, or software pages. Triggers: schema markup,
   structured data, JSON-LD, rich results, schema.org, search snippets,
   structured data validation.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Schema Markup

@@ -12,6 +12,10 @@ description: >-
   Playwright, Cypress, Vitest, Jest, pytest, coverage, mock, stub, fixture, factory,
   assertion, test strategy, test pyramid, flaky test, mutation testing, contract test,
   test data, regression test, smoke test.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # QA & Testing Skill

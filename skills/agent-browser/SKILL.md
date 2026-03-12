@@ -7,6 +7,11 @@ description: >-
   handling login flows, or comparing web states. Triggers: browser automation,
   open website, click button, fill form, take screenshot, scrape page, test web
   app, login to site, web UI automation.
+license: MIT
+compatibility: Requires agent-browser CLI (npx @anthropic-ai/agent-browser)
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Agent Browser

@@ -155,7 +155,7 @@ write_codex_skill() {
   [[ -z "$description" ]] && description="Production engineering skill for $name."
 
   description="$(printf '%s' "$description" | tr '\n' ' ' | sed -E 's/[[:space:]]+/ /g; s/^ //; s/ $//')"
-  max_len=700
+  max_len=1024
   if [[ ${#description} -gt $max_len ]]; then
     description="${description:0:$((max_len - 3))}..."
   fi
@@ -324,6 +324,8 @@ Targets:
   --codex               Install to .codex/ in current directory
   --codex-global        Install to $CODEX_HOME (default: ~/.codex/)
   --codex-md            Legacy: write codex.md in current directory
+  --agents-dir          Install to .agents/ (cross-client interop)
+  --agents-dir-global   Install to ~/.agents/ (cross-client interop)
 
 Components:
   --skills-only         Only install skills
@@ -352,6 +354,8 @@ while [[ $# -gt 0 ]]; do
     --codex)         TARGET="codex-project";  INTERACTIVE=false; shift ;;
     --codex-global)  TARGET="codex-global";   INTERACTIVE=false; shift ;;
     --codex-md)      TARGET="codex";          INTERACTIVE=false; shift ;;
+    --agents-dir)    TARGET="agents-dir-project"; INTERACTIVE=false; shift ;;
+    --agents-dir-global) TARGET="agents-dir-global"; INTERACTIVE=false; shift ;;
     --skills-only)   INSTALL_SKILLS=true; INSTALL_AGENTS=false; INSTALL_HOOKS=false; INTERACTIVE=false; shift ;;
     --agents-only)   INSTALL_SKILLS=false; INSTALL_AGENTS=true; INSTALL_HOOKS=false; INTERACTIVE=false; shift ;;
     --hooks-only)    INSTALL_SKILLS=false; INSTALL_AGENTS=false; INSTALL_HOOKS=true; INTERACTIVE=false; shift ;;
@@ -412,6 +416,8 @@ if $INTERACTIVE && [[ -t 0 ]]; then
   echo "    $(color bold)6.$(color reset) Codex CLI — this project       $(color dim).codex/$(color reset)"
   echo "    $(color bold)7.$(color reset) Codex CLI — global             $(color dim)$CODEX_HOME_DIR/$(color reset)"
   echo "    $(color bold)8.$(color reset) Codex markdown — legacy        $(color dim)codex.md$(color reset)"
+  echo "    $(color bold)9.$(color reset) Cross-client — this project    $(color dim).agents/$(color reset)"
+  echo "    $(color bold)10.$(color reset) Cross-client — global          $(color dim)~/.agents/$(color reset)"
   echo ""
   printf "  Select [1]: "
   read -r choice
@@ -426,6 +432,8 @@ if $INTERACTIVE && [[ -t 0 ]]; then
     6) TARGET="codex-project" ;;
     7) TARGET="codex-global" ;;
     8) TARGET="codex" ;;
+    9) TARGET="agents-dir-project" ;;
+    10) TARGET="agents-dir-global" ;;
     *) err "Invalid choice: $choice"; exit 1 ;;
   esac
 
@@ -480,6 +488,14 @@ case "$TARGET" in
   codex)
     TARGET_BASE="."
     TARGET_LABEL="Codex markdown export (legacy)"
+    ;;
+  agents-dir-project)
+    TARGET_BASE=".agents"
+    TARGET_LABEL="Cross-client interop (project)"
+    ;;
+  agents-dir-global)
+    TARGET_BASE="$HOME/.agents"
+    TARGET_LABEL="Cross-client interop (global)"
     ;;
 esac
 
@@ -698,11 +714,16 @@ install_cursor() {
 
   mkdir -p "$base"
 
-  # Skills — each SKILL.md becomes <skill-name>.md
+  # Skills — each SKILL.md becomes <skill-name>.md + references/
   if $INSTALL_SKILLS; then
     for d in "${SKILL_DIRS[@]}"; do
       name="$(basename "$d")"
       cp "$d/SKILL.md" "$base/$name.md"
+      # Copy reference subdirectories for progressive disclosure
+      if [[ -d "$d/references" ]]; then
+        mkdir -p "$base/$name-references"
+        cp -r "$d/references/"* "$base/$name-references/" 2>/dev/null || true
+      fi
       MANIFEST_SKILLS+=("$name")
       skills_installed=$((skills_installed + 1))
     done
@@ -842,6 +863,59 @@ install_codex_markdown() {
   write_manifest "."
 }
 
+# ── Install: Cross-client .agents/ (project or global) ───────────────────────
+
+install_agents_dir() {
+  local base="$1"
+  local skills_installed=0
+  local agents_installed=0
+
+  echo ""
+  header "Installing to $base/ ..."
+  echo ""
+
+  # Skills — standard SKILL.md + references/ per Agent Skills spec
+  if $INSTALL_SKILLS; then
+    mkdir -p "$base/skills"
+    for d in "${SKILL_DIRS[@]}"; do
+      name="$(basename "$d")"
+      mkdir -p "$base/skills/$name"
+      cp "$d/SKILL.md" "$base/skills/$name/SKILL.md"
+      if [[ -d "$d/references" ]]; then
+        cp -r "$d/references" "$base/skills/$name/references"
+      fi
+      if [[ -d "$d/scripts" ]]; then
+        cp -r "$d/scripts" "$base/skills/$name/scripts"
+      fi
+      if [[ -d "$d/assets" ]]; then
+        cp -r "$d/assets" "$base/skills/$name/assets"
+      fi
+      MANIFEST_SKILLS+=("$name")
+      skills_installed=$((skills_installed + 1))
+    done
+    info "$skills_installed skills installed"
+  fi
+
+  # Agents
+  if $INSTALL_AGENTS; then
+    mkdir -p "$base/agents"
+    for f in "${AGENT_FILES[@]}"; do
+      local agent_name
+      agent_name="$(basename "$f")"
+      cp "$f" "$base/agents/"
+      MANIFEST_AGENTS+=("$agent_name")
+      agents_installed=$((agents_installed + 1))
+    done
+    info "$agents_installed agents installed"
+  fi
+
+  if $INSTALL_HOOKS; then
+    warn "Hooks are only supported for Claude Code and OpenCode — skipped"
+  fi
+
+  write_manifest "$base"
+}
+
 # ── Manifest ──────────────────────────────────────────────────────────────────
 
 json_array_strings() {
@@ -901,6 +975,8 @@ case "$TARGET" in
   codex-project)  install_codex_registry "$TARGET_BASE" ;;
   codex-global)   install_codex_registry "$TARGET_BASE" ;;
   codex)          install_codex_markdown ;;
+  agents-dir-project) install_agents_dir "$TARGET_BASE" ;;
+  agents-dir-global)  install_agents_dir "$TARGET_BASE" ;;
 esac
 
 # ── Done ──────────────────────────────────────────────────────────────────────
@@ -912,6 +988,7 @@ case "$TARGET" in
   cursor)   info "Done! Restart Cursor to activate." ;;
   codex-project|codex-global) info "Done! Restart Codex to activate." ;;
   codex)    info "Done! codex.md is ready." ;;
+  agents-dir-*) info "Done! Skills installed to .agents/ (cross-client)." ;;
 esac
 echo "  To uninstall: $(color dim)bash $REPO_DIR/uninstall.sh$(color reset)"
 echo ""

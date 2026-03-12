@@ -6,6 +6,10 @@ description: >-
   editorial priorities, distribution plans, or measurement frameworks. Triggers:
   content strategy, editorial plan, topic clusters, content roadmap, blog
   strategy, thought leadership plan, SEO content planning.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Content Strategy

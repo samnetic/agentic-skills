@@ -6,6 +6,10 @@ description: >-
   messaging, offer structure, trust signals, and friction reduction. Triggers:
   CRO, conversion lift, landing page optimization, low signup rate, weak CTA,
   page funnel drop-off, offer testing.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Page CRO

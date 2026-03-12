@@ -13,6 +13,10 @@ description: >-
   caching, CDN, lazy loading, code splitting, Core Web Vitals, LCP, INP, CLS, TTFB,
   N+1, query optimization, connection pool, load test, k6, memory, profiling, bottleneck,
   speed, response time.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Performance Optimization Skill

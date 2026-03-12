@@ -14,6 +14,10 @@ description: >-
   Terraform, infrastructure as code, IaC, monitoring, Prometheus, Grafana, alerting,
   GitOps, blue-green, canary, container registry, GHCR, semantic-release, changeset,
   observability, SLO, SLI, incident response, rollback, GitHub workflow.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # DevOps & CI/CD Skill

@@ -6,6 +6,10 @@ description: >-
   copywriting, launch planning, and growth experiments. Triggers: product
   context, marketing context, ICP context, messaging baseline, shared context
   doc, go-to-market context, positioning context.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Product Marketing Context

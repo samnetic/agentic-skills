@@ -6,6 +6,10 @@ description: >-
   instrumentation, or fixing measurement gaps for experiments and GTM. Triggers:
   analytics setup, event tracking, GA4, GTM, conversion tracking, UTM strategy,
   instrumentation audit, measurement plan.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Analytics Tracking

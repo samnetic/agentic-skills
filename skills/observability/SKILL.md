@@ -1,20 +1,20 @@
 ---
 name: observability
 description: >-
-  Production observability, monitoring, and incident response expertise for Node.js
-  and Python SaaS applications. Use when instrumenting applications with OpenTelemetry,
-  setting up structured logging (pino, structlog), collecting metrics with Prometheus,
-  building Grafana dashboards, implementing distributed tracing, defining SLOs/SLIs and
-  error budgets, configuring alerting rules, designing health check endpoints, setting
-  up error tracking with Sentry, implementing correlation IDs for request tracing,
-  creating runbooks for incident response, conducting blameless post-mortems, building
-  APM pipelines, choosing between Datadog/Grafana Cloud/self-hosted stacks, or
-  reviewing observability posture of a service.
-  Triggers: observability, monitoring, logging, metrics, tracing, OpenTelemetry,
-  OTel, Prometheus, Grafana, alerting, SLO, SLI, error budget, health check,
-  incident, post-mortem, dashboard, Sentry, Datadog, structured logging, pino,
-  structlog, correlation ID, span, distributed tracing, APM, runbook, liveness,
-  readiness.
+  Production observability, monitoring, and incident response expertise. Use when
+  instrumenting applications with OpenTelemetry, setting up structured logging (pino,
+  structlog), collecting metrics with Prometheus, building Grafana dashboards,
+  implementing distributed tracing, defining SLOs/SLIs and error budgets, configuring
+  alerting, designing health checks, setting up Sentry, implementing correlation IDs,
+  creating runbooks, conducting post-mortems, or reviewing observability posture.
+  Triggers: observability, monitoring, logging, metrics, tracing, OpenTelemetry, OTel,
+  Prometheus, Grafana, alerting, SLO, SLI, error budget, health check, incident,
+  post-mortem, dashboard, Sentry, Datadog, structured logging, pino, correlation ID,
+  distributed tracing, APM, runbook.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Observability Skill

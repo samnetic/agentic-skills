@@ -7,6 +7,10 @@ description: >-
   pipelines and quality controls. Triggers: programmatic SEO, pages at scale,
   template pages, SEO templates, directory pages, integration pages, landing
   page generation, scalable SEO.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Programmatic SEO

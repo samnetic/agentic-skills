@@ -7,6 +7,10 @@ description: >-
   ADR packs, implementation plans, or document refactors for clarity and
   audience-fit structure. Triggers: specification, spec, PRD, BRD, SRS, FRS,
   NFR, architecture doc, design doc, ADR, implementation plan, requirements.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Spec Orchestrator

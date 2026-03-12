@@ -7,6 +7,10 @@ description: >-
   setting measurable quality targets, and producing audience-specific design
   artifacts. Triggers: architecture design, system design, ADR, NFR,
   scalability, resilience, distributed systems, C4, trade-off analysis.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Software Architecture

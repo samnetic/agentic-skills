@@ -23,6 +23,7 @@
     ".claude/hooks/*.sh",
     ".claude/settings.local.json",
     ".opencode/plugins/agentic-skills-hooks.js",
+    ".claude-plugin/marketplace.json",
     "README.md",
     "LICENSE"
   ],

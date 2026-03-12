@@ -13,6 +13,10 @@ description: >-
   worker thread, cluster, npm, pnpm, graceful shutdown, SIGTERM, health check,
   structured logging, error handling, async, callback, process, runtime, backend,
   node:test, node:sqlite, AbortController, Undici, Permission Model, Bun.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Node.js Engineering Skill

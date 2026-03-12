@@ -10,6 +10,10 @@ description: >-
   Triggers: debug, error, bug, exception, traceback, stack trace, troubleshoot, not working,
   crash, fix, broken, undefined, null, NaN, timeout, hang, freeze, memory leak, race
   condition, flaky, intermittent, regression, post-mortem, incident, root cause.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Debugging Skill

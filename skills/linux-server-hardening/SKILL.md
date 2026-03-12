@@ -1,20 +1,22 @@
 ---
 name: linux-server-hardening
 description: >-
-  Linux server administration and security hardening expertise. Use when setting up
-  a VPS or bare-metal server, hardening SSH configuration, configuring firewalls
-  (UFW, nftables, iptables), setting up fail2ban, managing users and sudo permissions,
-  configuring systemd services with security directives, enabling unattended security
-  updates, kernel hardening via sysctl, running CIS benchmark audits with Lynis,
-  setting up disk encryption (LUKS), managing logs with journald and log rotation,
-  configuring intrusion detection (AIDE, rkhunter), backup strategies (borgbackup,
-  restic), monitoring with Prometheus node_exporter, Nginx/Caddy reverse proxy
-  hardening, TLS certificate management, or preparing for compliance audits.
-  Triggers: VPS, server, Linux, Ubuntu, Debian, SSH, firewall, UFW, nftables,
-  iptables, fail2ban, sysctl, kernel hardening, CIS benchmark, Lynis, systemd,
-  hardening, security audit, server setup, unattended-upgrades, LUKS, encryption,
-  backup, rsync, borgbackup, restic, nginx, caddy, TLS, Let's Encrypt, certbot,
-  node_exporter, AIDE, rkhunter, AppArmor, SELinux.
+  Linux server administration and security hardening expertise. Use when setting up a
+  VPS or bare-metal server, hardening SSH, configuring firewalls (UFW, nftables),
+  setting up fail2ban, managing users and sudo, configuring systemd security directives,
+  enabling unattended updates, kernel hardening via sysctl, running CIS audits with
+  Lynis, disk encryption (LUKS), log management, intrusion detection (AIDE, rkhunter),
+  backup strategies (borgbackup, restic), Nginx/Caddy reverse proxy hardening, TLS
+  management, or preparing for compliance audits.
+  Triggers: VPS, server, Linux, Ubuntu, Debian, SSH, firewall, UFW, nftables, fail2ban,
+  sysctl, kernel hardening, CIS benchmark, Lynis, systemd, hardening, security audit,
+  server setup, LUKS, backup, borgbackup, restic, nginx, caddy, TLS, Let's Encrypt,
+  AppArmor, SELinux.
+license: MIT
+compatibility: Designed for Debian/Ubuntu Linux servers
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Linux Server Hardening Skill

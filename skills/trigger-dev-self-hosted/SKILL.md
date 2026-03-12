@@ -10,6 +10,11 @@ description: >-
   Triggers: Trigger.dev, trigger.config.ts, trigger task, background job, workflow,
   self-hosted Trigger.dev, queue, concurrency, idempotency key, retry policy,
   codex trigger, claude code trigger, trigger deployment, helm trigger.
+license: MIT
+compatibility: Requires Docker and Kubernetes for self-hosting
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Trigger.dev Self-Hosted Production Skill

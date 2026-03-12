@@ -6,6 +6,10 @@ description: >-
   trial/freemium policy, price increase plans, or pricing experiments. Triggers:
   pricing tiers, packaging, monetization, value metric, willingness to pay,
   freemium, trial design, price increase, ARPU optimization.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Pricing Strategy

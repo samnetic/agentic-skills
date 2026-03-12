@@ -14,6 +14,10 @@ description: >-
   virtualenv, decorator, context manager, generator, comprehension, structlog, tomllib,
   TypeAdapter, ExceptionGroup, TaskGroup, TypeIs, PEP 695, SQLAlchemy, free-threaded,
   template strings.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Python Engineering Skill

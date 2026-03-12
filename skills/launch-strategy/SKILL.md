@@ -6,6 +6,10 @@ description: >-
   launch messaging, stakeholder readiness, or post-launch momentum. Triggers:
   launch plan, GTM launch, feature launch, Product Hunt launch, release campaign,
   early access rollout, launch checklist.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Launch Strategy

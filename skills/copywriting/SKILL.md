@@ -6,6 +6,10 @@ description: >-
   rewriting copy to improve clarity, differentiation, and conversion outcomes.
   Triggers: copywriting, rewrite copy, headline, subhead, CTA text, landing page
   copy, pricing page copy, messaging rewrite, conversion copy.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Copywriting

@@ -2,21 +2,20 @@
 name: postgres-db
 description: >-
   PostgreSQL database expertise — design, optimization, operations, and ORM integration.
-  Covers PostgreSQL 15–18 features including MERGE, JSON_TABLE, pg_stat_io, incremental
-  backup, improved VACUUM, native uuidv7(), asynchronous I/O, and OAuth authentication.
-  Use when designing schemas, writing queries, optimizing slow queries with EXPLAIN ANALYZE,
-  creating indexes (B-tree, GIN, GiST, BRIN, HNSW), implementing Row-Level Security (RLS),
-  setting up connection pooling (PgBouncer, Supavisor), partitioning tables, managing
-  migrations, using JSONB effectively, writing CTEs and window functions, configuring
-  replication (logical and physical), implementing full-text search, vector/embedding
-  search (pgvector), working with Prisma ORM or Drizzle ORM patterns, analyzing pg_stat
-  views, tuning postgresql.conf, implementing cursor pagination, designing for
-  multi-tenancy, UUIDv7 primary keys, Supabase patterns, or troubleshooting PostgreSQL
-  performance issues.
-  Triggers: PostgreSQL, postgres, SQL, database, query, index, migration, schema,
-  EXPLAIN, RLS, Prisma, Drizzle, pgbouncer, Supavisor, partition, replication, JSONB,
-  CTE, window function, full-text search, pg_stat, vacuum, connection pool, pgvector,
-  embedding, MERGE, JSON_TABLE, UUIDv7, Supabase.
+  Use when designing schemas, writing queries, optimizing with EXPLAIN ANALYZE, creating
+  indexes (B-tree, GIN, GiST, BRIN, HNSW), implementing Row-Level Security (RLS), setting
+  up connection pooling (PgBouncer, Supavisor), partitioning tables, managing migrations,
+  using JSONB, writing CTEs and window functions, configuring replication, full-text search,
+  vector search (pgvector), working with Prisma or Drizzle ORM, tuning postgresql.conf,
+  cursor pagination, multi-tenancy, UUIDv7, Supabase patterns, or troubleshooting
+  PostgreSQL performance.
+  Triggers: PostgreSQL, postgres, SQL, database, query, index, migration, schema, EXPLAIN,
+  RLS, Prisma, Drizzle, pgbouncer, partition, replication, JSONB, CTE, window function,
+  full-text search, pg_stat, vacuum, connection pool, pgvector, UUIDv7, Supabase.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # PostgreSQL Expert Skill

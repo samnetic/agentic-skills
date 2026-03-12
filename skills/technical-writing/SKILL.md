@@ -7,6 +7,10 @@ description: >-
   and fit-for-purpose format (Diataxis, ADR, PRD, reference, how-to).
   Triggers: documentation, spec, PRD, ADR, runbook, README, API docs,
   technical writing, developer guide, architecture document, doc review.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Technical Writing

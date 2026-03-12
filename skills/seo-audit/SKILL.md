@@ -6,6 +6,10 @@ description: >-
   architecture weaknesses, or Core Web Vitals performance blockers. Triggers:
   SEO audit, technical SEO, indexation, crawlability, ranking drop, metadata
   review, search performance, site health check.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # SEO Audit

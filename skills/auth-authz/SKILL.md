@@ -14,6 +14,10 @@ description: >-
   MFA, 2FA, TOTP, SSO, SAML, API key, token, refresh token, password, bcrypt,
   argon2, multi-tenant, tenant isolation, middleware, Auth.js, next-auth, Lucia,
   better-auth.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Authentication & Authorization Skill

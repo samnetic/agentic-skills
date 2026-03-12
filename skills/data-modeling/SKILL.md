@@ -2,19 +2,19 @@
 name: data-modeling
 description: >-
   Database design and data modeling expertise. Use when designing entity-relationship
-  models, normalizing schemas, deciding between normalization vs denormalization, designing
-  temporal data models, implementing soft deletes, creating audit trails, designing
-  polymorphic associations, modeling hierarchical data (trees, graphs), designing
-  multi-tenant data architectures, creating ERDs, defining domain entities and relationships,
-  planning data migration strategies, event sourcing patterns, document model patterns with
-  JSONB, vector embedding storage for AI/ML, Change Data Capture (CDC), temporal/system-versioned
-  tables, data vault modeling for data warehouses, graph data patterns in relational DBs,
-  or reviewing existing data models for issues.
+  models, normalizing schemas, deciding normalization vs denormalization, designing temporal
+  data models, implementing soft deletes, creating audit trails, polymorphic associations,
+  modeling hierarchical data (trees, graphs), multi-tenant architectures, creating ERDs,
+  planning data migration strategies, event sourcing, JSONB document patterns, vector
+  embedding storage, Change Data Capture (CDC), or reviewing existing data models.
   Triggers: data model, ERD, entity relationship, normalization, denormalization, schema
   design, database design, temporal, soft delete, audit trail, polymorphic, hierarchy,
   tree structure, multi-tenant, domain model, migration strategy, event sourcing, CQRS,
-  JSONB document, vector embedding, CDC, change data capture, temporal table, data vault,
-  graph data, adjacency list, Citus, distributed PostgreSQL.
+  JSONB document, vector embedding, CDC, temporal table, data vault.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Data Modeling Skill

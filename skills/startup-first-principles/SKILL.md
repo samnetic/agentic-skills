@@ -7,6 +7,10 @@ description: >-
   making build/pivot/kill decisions. Triggers: first principles, startup
   strategy, entrepreneurship, opportunity sizing, thesis, assumption mapping,
   validation plan, pivot decision, founder strategy, product thesis.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Startup First Principles

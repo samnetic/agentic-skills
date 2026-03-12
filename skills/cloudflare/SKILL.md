@@ -14,6 +14,10 @@ description: >-
   origin certificate, Workers, Pages, R2, KV, D1, Durable Objects, Zero Trust,
   Tunnel, cloudflared, DDoS, rate limiting, bot management, cache, purge,
   page rules, transform rules, DNSSEC, SPF, DKIM, DMARC, wrangler.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Cloudflare Skill

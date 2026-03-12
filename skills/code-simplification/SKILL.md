@@ -12,6 +12,10 @@ description: >-
   dead code, code smell, cyclomatic complexity, extract function, inline, nesting,
   over-engineering, abstraction, design pattern, single responsibility, dependency
   injection, clean architecture, technical debt, readability.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Code Simplification Skill

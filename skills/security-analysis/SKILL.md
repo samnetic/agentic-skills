@@ -2,24 +2,21 @@
 name: security-analysis
 description: >-
   Application security analysis, code review, and penetration testing expertise. Use when
-  reviewing code for security vulnerabilities, conducting OWASP Top 10 (2025) assessments,
-  auditing authentication/authorization (including passkeys/WebAuthn), checking for
-  injection attacks (SQL, XSS, CSRF, command injection, prompt injection), reviewing
-  secrets management, implementing modern CSP (nonce-based, strict-dynamic),
-  configuring security headers (Permissions-Policy, COOP, COEP), auditing dependency
-  vulnerabilities and supply chain security (SLSA, SBOM, Sigstore), reviewing JWT
-  implementations, implementing input validation, designing secure API endpoints,
-  reviewing Docker security, checking for hardcoded credentials, implementing RBAC/ABAC,
-  reviewing encryption patterns, conducting threat modeling (STRIDE), assessing AI/LLM
-  security risks (OWASP LLM Top 10), or preparing security reports with severity
-  classifications.
+  reviewing code for vulnerabilities, conducting OWASP Top 10 (2025) assessments, auditing
+  authentication/authorization (passkeys/WebAuthn), checking for injection attacks (SQL,
+  XSS, CSRF, command, prompt injection), reviewing secrets management, implementing CSP,
+  configuring security headers, auditing supply chain security (SLSA, SBOM), reviewing
+  JWT implementations, designing secure API endpoints, implementing RBAC/ABAC, conducting
+  threat modeling (STRIDE), assessing AI/LLM security risks, or preparing security reports.
   Triggers: security, vulnerability, OWASP, injection, XSS, CSRF, SQL injection,
-  authentication, authorization, JWT, secrets, CSP, rate limiting, dependency audit,
-  penetration test, pentest, CVE, hardcoded credentials, SAST, DAST, threat model,
-  STRIDE, encryption, hashing, RBAC, security review, audit, passkeys, WebAuthn,
-  supply chain, SLSA, SBOM, prompt injection, LLM security, Permissions-Policy,
-  COOP, COEP, Socket.dev, GitHub Advanced Security, API security, session management,
-  CORS, CI/CD security pipeline, HMAC, rate limiting, GraphQL security.
+  authentication, authorization, JWT, secrets, CSP, penetration test, pentest, CVE,
+  SAST, DAST, threat model, STRIDE, encryption, RBAC, security review, audit, passkeys,
+  WebAuthn, supply chain, SLSA, SBOM, prompt injection, LLM security, API security,
+  session management.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Security Analysis Skill

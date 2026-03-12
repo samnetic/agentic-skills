@@ -9,6 +9,11 @@ description: >-
   tuning via config and flags. Triggers: opencode cli, opencode run, opencode
   model, opencode variant, opencode json output, opencode tools, opencode
   permissions, opencode mcp, opencode automation.
+license: MIT
+compatibility: Requires OpenCode CLI (opencode)
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # OpenCode CLI

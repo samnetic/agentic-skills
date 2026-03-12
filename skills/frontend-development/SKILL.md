@@ -4,19 +4,18 @@ description: >-
   Frontend development expertise — CSS, accessibility, responsive design, performance,
   and UX. Use when building responsive layouts, implementing accessibility (WCAG 2.2),
   writing modern CSS (container queries, :has(), subgrid, layers, nesting, @scope,
-  anchor positioning, scroll-driven animations), designing CSS architecture
-  (utility-first, CSS modules, Tailwind v4), optimizing Core Web Vitals
-  (LCP, CLS, INP), implementing design tokens and systems, handling forms with
-  validation, implementing animations and transitions (view transitions, @starting-style),
-  writing semantic HTML, native dialog/popover elements, keyboard navigation,
-  screen reader support, responsive images, dark mode (light-dark(), color-mix()),
-  i18n/l10n patterns, or reviewing frontend code quality.
-  Triggers: CSS, accessibility, a11y, WCAG, responsive, mobile-first, Tailwind,
-  design system, design tokens, Core Web Vitals, LCP, CLS, INP, animation,
-  semantic HTML, ARIA, screen reader, keyboard navigation, form validation,
-  dark mode, i18n, container query, subgrid, CSS layers, CSS nesting, @scope,
-  anchor positioning, popover, dialog, view transitions, scroll-driven animations,
-  @starting-style, color-mix, light-dark, @property, Tailwind v4.
+  anchor positioning), designing CSS architecture (Tailwind v4, CSS modules), optimizing
+  Core Web Vitals (LCP, CLS, INP), implementing design tokens, handling forms, animations
+  (view transitions, @starting-style), semantic HTML, dialog/popover, keyboard navigation,
+  screen reader support, dark mode, or reviewing frontend code quality.
+  Triggers: CSS, accessibility, a11y, WCAG, responsive, mobile-first, Tailwind, design
+  system, design tokens, Core Web Vitals, LCP, CLS, INP, animation, semantic HTML, ARIA,
+  screen reader, keyboard navigation, form validation, dark mode, i18n, container query,
+  subgrid, popover, dialog, view transitions.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Frontend Development Skill

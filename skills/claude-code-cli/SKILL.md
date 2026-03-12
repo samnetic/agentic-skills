@@ -10,6 +10,11 @@ description: >-
   tools disabled. Triggers: claude code cli, claude -p, claude print mode,
   fallback model, claude streaming json, claude system prompt, claude tools,
   claude mcp, claude permissions, claude automation.
+license: MIT
+compatibility: Requires Claude Code CLI (claude)
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Claude Code CLI

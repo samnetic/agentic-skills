@@ -9,6 +9,11 @@ description: >-
   operation with constrained tool execution. Triggers: codex cli, codex exec,
   codex model, codex sandbox, codex approvals, codex json output, codex mcp,
   codex config toml, codex automation.
+license: MIT
+compatibility: Requires Codex CLI (codex)
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Codex CLI
