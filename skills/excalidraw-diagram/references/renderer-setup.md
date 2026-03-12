@@ -98,3 +98,59 @@ npm install
 - Ensure `elements` is non-empty.
 - Run `python lint_excalidraw.py file.excalidraw --strict`.
 - Verify no elements are all marked `"isDeleted": true`.
+
+### Title text appears cropped
+
+Switch from monospace (family=3) to Helvetica (family=2) and reduce font size.
+Monospace characters are wider per-character, causing Excalidraw to clip text
+that fits fine in Helvetica at the same width.
+
+| Font Family | ID | Character Width | Best For |
+|-------------|----|-----------------|-----------------------|
+| Virgil | 1 | Medium | Handwritten / sketch |
+| Helvetica | 2 | Narrow | Titles, labels, clean |
+| Cascadia | 3 | Wide (monospace) | Code snippets only |
+
+## Alternative: Self-Hosted Docker + DragEvent Drop
+
+If the `render_template.html` approach has connectivity issues (it fetches
+Excalidraw via `esm.sh`), use a self-hosted Excalidraw container instead:
+
+```bash
+# Start Excalidraw container (one-time)
+docker run -d --name excalidraw-local -p 3030:80 excalidraw/excalidraw:latest
+```
+
+Then inject diagrams via Playwright's DragEvent API:
+
+```python
+from playwright.sync_api import sync_playwright
+
+with sync_playwright() as p:
+    browser = p.chromium.launch(headless=True)
+    page = browser.new_page(viewport={"width": 1920, "height": 1080})
+    page.goto("http://localhost:3030", wait_until="networkidle")
+    page.wait_for_timeout(3000)
+
+    # Inject via DragEvent drop (proven approach)
+    page.evaluate(f"""() => {{
+        const data = JSON.stringify({diagram_json});
+        const blob = new Blob([data], {{ type: "application/json" }});
+        const file = new File([blob], "d.excalidraw", {{ type: "application/json" }});
+        const drop = new DragEvent("drop", {{
+            bubbles: true, cancelable: true, dataTransfer: new DataTransfer()
+        }});
+        drop.dataTransfer.items.add(file);
+        (document.querySelector(".excalidraw__canvas") || document.body)
+            .dispatchEvent(drop);
+    }}""")
+
+    page.wait_for_timeout(2000)
+    page.keyboard.press("Escape")        # dismiss modals
+    page.keyboard.press("Control+Shift+Digit1")  # zoom-to-fit
+    page.wait_for_timeout(1000)
+    page.screenshot(path="output.png")
+    browser.close()
+```
+
+This approach works offline and avoids ESM CDN dependencies.

@@ -149,6 +149,7 @@ Rules:
 - Keep `text` and `originalText` human-readable.
 - Bind arrows/containers correctly on both ends.
 - Pull colors from [references/color-palette.md](references/color-palette.md).
+- Use font family `2` (Helvetica) for titles and wide labels — monospace (family `3`) has wider characters and clips more easily in Excalidraw's text rendering.
 
 #### Large Diagram Strategy (Comprehensive)
 
@@ -161,6 +162,70 @@ For large diagrams, build section-by-section:
 5. Run lint + render loop after each major section and again at final pass.
 
 Do not attempt one-shot generation for large diagrams.
+
+#### Programmatic Generation (Recommended for Complex Diagrams)
+
+For diagrams with many elements (30+), write a Python builder script instead of hand-editing JSON.
+Define helper functions for each element type:
+
+```python
+elements = []
+seed_counter = [1000]
+
+def next_seed():
+    seed_counter[0] += 1
+    return seed_counter[0]
+
+def rect(id, x, y, w, h, stroke, bg, bound_text=None, bound_arrows=None):
+    be = []
+    if bound_text: be.append({"id": bound_text, "type": "text"})
+    for a in (bound_arrows or []): be.append({"id": a, "type": "arrow"})
+    elements.append({
+        "type": "rectangle", "id": id,
+        "x": x, "y": y, "width": w, "height": h,
+        "strokeColor": stroke, "backgroundColor": bg,
+        "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+        "roughness": 0, "opacity": 100, "angle": 0,
+        "seed": next_seed(), "version": 1, "versionNonce": next_seed(),
+        "isDeleted": False, "groupIds": [], "boundElements": be or None,
+        "link": None, "locked": False, "roundness": {"type": 3}
+    })
+
+def text(id, x, y, w, h, txt, size=13, color="#1F2937", align="center",
+         valign="middle", container=None, family=2):
+    elements.append({
+        "type": "text", "id": id,
+        "x": x, "y": y, "width": w, "height": h,
+        "text": txt, "originalText": txt,
+        "fontSize": size, "fontFamily": family,
+        "textAlign": align, "verticalAlign": valign,
+        "strokeColor": color, "backgroundColor": "transparent",
+        "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+        "roughness": 0, "opacity": 100, "angle": 0,
+        "seed": next_seed(), "version": 1, "versionNonce": next_seed(),
+        "isDeleted": False, "groupIds": [],
+        "boundElements": None, "link": None, "locked": False,
+        "containerId": container, "autoResize": True, "lineHeight": 1.25
+    })
+
+# Build the diagram using these helpers
+rect("staging_box", 50, 100, 200, 300, "#1971C2", "#D0EBFF", bound_text="staging_label")
+text("staging_label", 50, 100, 200, 30, "Staging n8n", container="staging_box")
+
+# Write output
+import json
+with open("diagram.excalidraw", "w") as f:
+    json.dump({
+        "type": "excalidraw", "version": 2,
+        "source": "https://excalidraw.com",
+        "elements": elements,
+        "appState": {"viewBackgroundColor": "#ffffff", "gridSize": None},
+        "files": {}
+    }, f, indent=2)
+```
+
+This is more maintainable than editing raw JSON for large diagrams, and makes
+repositioning, color changes, and section additions trivial.
 
 ### 6) Validate and Iterate (Mandatory)
 
