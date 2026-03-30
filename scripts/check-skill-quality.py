@@ -281,7 +281,7 @@ def check_frontmatter(
             ))
 
     if strict_frontmatter:
-        extras = sorted(set(parsed) - {"name", "description", "compatibility"})
+        extras = sorted(set(parsed) - {"name", "description", "compatibility", "license", "metadata"})
         if extras:
             issues.append(Issue(
                 f"Unexpected frontmatter fields: {', '.join(extras)}", cat, "warn",
