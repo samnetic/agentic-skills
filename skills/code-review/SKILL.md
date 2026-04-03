@@ -234,3 +234,30 @@ since you're doing lookups in a loop. O(1) vs O(n) per lookup."
 - [ ] Summary with blocking issues, suggestions, and missing items
 - [ ] PR < 400 lines (if not, ask to split)
 - [ ] Review completed within 4 hours of request
+
+---
+
+## Pipeline-Aware Review Mode
+
+When reviewing a PR linked to a pipeline issue (contains "Closes #N" or
+references a pipeline-generated issue), apply these additional checks:
+
+### Acceptance Criteria Verification
+- [ ] Every acceptance criterion from the linked issue is covered by a test
+- [ ] Tests use Given/When/Then structure matching the issue's criteria
+- [ ] No acceptance criterion is missing test coverage
+
+### Vertical Slice Completeness
+- [ ] PR touches all layers specified in the issue (DB, API, UI, tests)
+- [ ] No layer was skipped or deferred without justification
+- [ ] Changes are self-contained within the vertical slice
+
+### Pipeline Consistency
+- [ ] PR title includes `[Phase N]` prefix matching the issue's phase
+- [ ] Branch name follows `feature/{pipeline-id}/{issue-number}-{slug}` convention
+- [ ] PR body links to the original issue
+- [ ] No changes outside the scope of the linked issue
+
+### AFK Review Gate
+- For `agent:afk` issues: verify the agent followed TDD (tests written before implementation)
+- For `agent:hitl` issues: verify the human-judgment decision was documented

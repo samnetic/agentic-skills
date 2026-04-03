@@ -189,8 +189,53 @@ Run through before handing any artifact to the requester.
 - Architecture recommendations without constraints or option comparison.
 - Quality claims without measurable thresholds.
 
+## Pipeline Integration
+
+When a Plan-Ready PRD is approved and the user wants to proceed to implementation:
+
+1. **Hand off to `prd-to-plan`** — the PRD becomes input for vertical-slice
+   decomposition into an implementation plan.
+2. **Hand off to `plan-to-issues`** — the plan becomes input for GitHub issue
+   creation with AFK/HITL classification.
+3. **Hand off to `delivery-pipeline`** — for full end-to-end orchestration.
+
+### Plan-Ready PRD Requirements
+
+For a PRD to be consumable by downstream pipeline skills, it MUST include:
+
+- FR IDs (FR-001, FR-002...) for every functional requirement
+- Acceptance criteria in Given/When/Then format for every FR
+- Dependency markers between FRs (e.g., "FR-003 depends on FR-001")
+- AFK-eligibility hints per FR (can an agent implement this autonomously?)
+- Vertical-slice suggestions (which FRs group into natural slices?)
+
+If producing a PRD for pipeline consumption, add these columns to the FR table:
+
+```markdown
+| ID | Requirement | Acceptance Criteria | Priority | Dependencies | AFK Eligible | Slice |
+```
+
+### Artifact Handoff Metadata
+
+When producing artifacts for the delivery pipeline, include this YAML header:
+
+```yaml
+---
+pipeline-stage: specification
+pipeline-id: {feature-id-YYYYMMDD}
+input-from: discovery
+output-to: planning
+created: {date}
+status: complete
+---
+```
+
 ## Handoff Guidance
 
 - Use `business-analysis` for requirement depth.
 - Use `software-architecture` for design trade-offs and ADR deltas.
 - Use `technical-writing` for final structure and compression pass.
+- Use `prd-writer` for interactive Plan-Ready PRD creation with discovery workflow.
+- Use `prd-to-plan` to convert approved PRDs into vertical-slice implementation plans.
+- Use `plan-to-issues` to convert plans into dependency-ordered GitHub issues.
+- Use `delivery-pipeline` for full end-to-end feature orchestration.

@@ -162,6 +162,24 @@ For each slice, apply Red-Green-Refactor:
 4. Refactor while tests stay green
 5. The slice is "done" when the E2E test passes
 
+### TDD from Issue (Pipeline Integration)
+
+When working on an issue from `plan-to-issues`, use TDD as the entry point
+for implementation:
+
+1. **Read the issue** — extract acceptance criteria (Given/When/Then)
+2. **Write failing tests** — translate each criterion into a test
+   - One test per acceptance criterion
+   - Tests should use the domain language from the issue
+   - Tests must fail before any implementation (RED)
+3. **Implement** — write minimum code to pass each test (GREEN)
+4. **Refactor** — clean up while tests stay green (REFACTOR)
+5. **Verify** — run full test suite, confirm no regressions
+6. **Create PR** — link to issue with "Closes #N"
+
+This workflow ensures that acceptance criteria from the PRD flow directly
+into executable tests before any code is written.
+
 ### 8. Apply the System-Wide Test Checklist
 
 Before marking a feature as fully tested, answer these 5 questions:

@@ -8,8 +8,8 @@ Use `install.sh` from a target project to copy skills/agents/hooks for supported
 
 ```
 skills/           → skill directories, each containing SKILL.md (npx distribution root)
-agents/           → 10 agent .md files
-.claude/          → Mirror of skills + agents + hooks (for local development)
+agents/           → 13 agent .md files
+.claude/          → Symlinks to skills/ and agents/ + hooks (for local development)
 .claude/hooks/    → 7 bash command hook scripts
 .opencode/        → OpenCode plugin bridge source (hook compatibility)
 install.sh        → Installer script (Claude/OpenCode/Cursor/Codex registry + codex.md legacy export)
@@ -21,7 +21,18 @@ scripts/          → release helpers (formula rendering, release metadata check
 CHANGELOG.md      → Release history
 ```
 
-## Available Skills
+## Pipeline Skills (Workflow Orchestration)
+
+| Skill | Triggers |
+|-------|----------|
+| `grill-session` | Stress-test proposals, interrogate assumptions, devil's advocate |
+| `prd-writer` | Write PRD, create requirements, spec out a feature |
+| `prd-to-plan` | Plan this PRD, vertical slices, tracer bullet, implementation plan |
+| `plan-to-issues` | Create issues from plan, convert plan to tickets |
+| `delivery-pipeline` | Full pipeline, end to end, build this feature, lfg |
+| `agent-setup-audit` | Audit my setup, review agent config, clean up instructions |
+
+## Domain Skills
 
 | Skill | Lines | Triggers |
 |-------|-------|----------|
@@ -52,10 +63,12 @@ CHANGELOG.md      → Release history
 | `technical-writing` | 1680+ | Diátaxis, README, API docs, JSDoc/TSDoc, ADRs, changelogs, runbooks |
 | `docker-production` | 620+ | Dockerfile, compose, multi-stage builds, container security |
 
-## Available Agents (10)
+## Available Agents (13)
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
+| `pipeline-orchestrator` | opus | End-to-end feature delivery — routes ideation through ship |
+| `design-explorer` | opus | Parallel competing API/module designs with depth scoring |
 | `software-architect` | opus | System design, architecture decisions, trade-off analysis |
 | `security-auditor` | opus | Security review, vulnerability assessment, OWASP compliance |
 | `pr-reviewer` | opus | Comprehensive code review with severity-labeled feedback |
@@ -65,6 +78,7 @@ CHANGELOG.md      → Release history
 | `trigger-dev-expert` | sonnet | Trigger.dev tasks/workflows, self-hosting and production rollout guidance |
 | `qa-engineer` | sonnet | Test strategy, test implementation, coverage analysis |
 | `ba-analyst` | sonnet | Requirements gathering, PRDs, user stories |
+| `issue-triager` | sonnet | GitHub issue triage, classification, severity routing |
 | `git-flow-expert` | sonnet | Branching strategy, git hooks, release automation |
 
 ## Conventions

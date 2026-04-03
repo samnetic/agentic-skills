@@ -75,6 +75,27 @@ Optional:
 - Casual creation tasks (write an email, draft a post)
 - Questions where the user already knows the answer and just wants validation
 
+## Council Modes
+
+### Standard Mode (default)
+Uses the 5 default advisor personas (Contrarian, First Principles, Expansionist,
+Outsider, Executor). Best for general decisions.
+
+### Architecture Council Mode
+Activate with: "architecture council", "arch council", or when the decision
+involves system design, boundaries, or technical trade-offs.
+
+Uses 5 specialized architecture personas instead of the defaults:
+- **The Performance Engineer** — optimizes for latency, throughput, resource efficiency
+- **The Security Architect** — focuses on attack surfaces, compliance, trust boundaries
+- **The DX Advocate** — prioritizes developer experience, API ergonomics, onboarding
+- **The Operations Lead** — considers deployment, monitoring, on-call, failure modes
+- **The Domain Expert** — ensures bounded contexts, domain integrity, model purity
+
+When Architecture Council mode is active, read
+`references/architecture-advisor-personas.md` instead of
+`references/advisor-personas.md` in Phase 2.
+
 ## Execution Protocol
 
 ### Phase 1: Context Enrichment

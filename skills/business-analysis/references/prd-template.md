@@ -22,9 +22,9 @@
 |---|---|---|---|
 
 ## Functional Requirements
-| ID | Requirement | Priority | Acceptance Criteria |
-|---|---|---|---|
-| FR-1 |  | Must | Given/When/Then |
+| ID | Requirement | Priority | Acceptance Criteria | Dependencies | AFK Eligible | Slice |
+|---|---|---|---|---|---|---|
+| FR-1 |  | Must | Given/When/Then | — | Yes/No | {slice name} |
 
 ## Non-Functional Requirements
 | Attribute | Metric | Target | Validation Method |
@@ -38,6 +38,11 @@
 ## Success Metrics
 | KPI | Baseline | Target | Measurement |
 |---|---|---|---|
+
+## Vertical Slice Suggestions
+| Slice Name | FRs Included | Layers Touched | Phase | AFK Eligible |
+|---|---|---|---|---|
+| {name} | FR-1, FR-3 | DB + API + UI + Test | Phase 0 (tracer) | Yes |
 
 ## Open Questions
 1.

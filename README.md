@@ -1,8 +1,8 @@
 # Agentic Skills
 
-> Curated expert-level domain skills + specialized agents for Claude Code, OpenCode, Cursor, and Codex.
+> End-to-end delivery pipeline + expert domain skills + specialized agents for Claude Code, OpenCode, Cursor, and Codex.
 
-Production-grade reference guides with decision trees, anti-patterns, code examples, and checklists. Drop into any project for instant AI-assisted development expertise.
+Go from raw idea to production-deployed feature using structured workflows, parallel agent execution, and deep domain expertise. Includes a complete delivery pipeline (ideation → spec → plan → issues → implementation → review → ship) with AFK/HITL classification for autonomous agent execution.
 
 ## Install
 
@@ -113,7 +113,79 @@ codex exec --skip-git-repo-check "List directory names under ./.codex/skills onl
 opencode run "List directory names under ./skills only. Format: SKILLS:name1,name2,..."
 ```
 
-## Skills
+## Delivery Pipeline — Idea to Production
+
+The delivery pipeline chains skills together for complete feature delivery. Start at any stage:
+
+```
+ IDEATION ──→ DISCOVERY ──→ SPECIFICATION ──→ PLANNING ──→ ISSUES ──→ IMPLEMENTATION ──→ REVIEW ──→ SHIP
+     │             │              │               │            │             │               │         │
+ grill-session  prd-writer    spec-orchestrator  prd-to-     plan-to-    [domain skills   code-    devops-
+ + council                    + software-arch    plan        issues      + qa-testing]    review    cicd
+```
+
+### Quick Start — Building a Full-Stack App from Scratch
+
+```
+"Build a task management app with real-time updates"
+
+Step 1 → grill-session     Stress-test the idea, surface hidden assumptions
+Step 2 → prd-writer        Interactive PRD creation with codebase validation
+Step 3 → prd-to-plan       Vertical-slice plan with tracer bullet Phase 0
+Step 4 → plan-to-issues    GitHub issues with AFK/HITL tags + dependencies
+Step 5 → (agents)          Parallel agents execute AFK issues via TDD
+Step 6 → code-review       Automated review + security scan
+Step 7 → devops-cicd       Deploy and verify
+```
+
+Or use the orchestrator for full automation:
+```
+@pipeline-orchestrator Build a task management app with real-time updates
+```
+
+### AFK vs HITL — Autonomous Execution
+
+Every task is classified:
+- **AFK** (Away From Keyboard) — agent can implement and PR autonomously
+- **HITL** (Human In The Loop) — needs human judgment (auth, payments, PII, ambiguous scope)
+
+AFK issues run in parallel via sub-agents. HITL issues are flagged for your review.
+
+### Pipeline Skills
+
+| Skill | Purpose |
+|-------|---------|
+| `grill-session` | Stress-test proposals by interrogating assumptions depth-first |
+| `prd-writer` | Interactive Plan-Ready PRD creation with codebase validation |
+| `prd-to-plan` | Vertical-slice implementation plan with tracer-bullet Phase 0 |
+| `plan-to-issues` | GitHub issues with AFK/HITL classification + dependency links |
+| `delivery-pipeline` | Master orchestrator — routes work through all stages |
+| `agent-setup-audit` | Audit CLAUDE.md, skills, hooks for contradictions and bloat |
+
+### Maintaining Your Setup
+
+Run periodic audits to keep your agentic configuration clean:
+
+```
+"Audit my setup" → agent-setup-audit
+
+Checks: contradictions, redundancy, vague instructions, stale context,
+        CLAUDE.md ↔ AGENTS.md sync, skill overlap, hook conflicts
+```
+
+### Recommended Project File Structure
+
+| File | Purpose | Volatility |
+|------|---------|-----------|
+| `CLAUDE.md` | Project-specific agent instructions | Stable (project lifetime) |
+| `AGENTS.md` | Symlink to CLAUDE.md for multi-agent compat | Stable |
+| `SPEC.md` | Application specification and requirements | Stable (updated with features) |
+| `CONTEXT.md` | Current project context for agent sessions | Volatile (per-session) |
+| `TASKS.md` | Active task tracking | Volatile (archived when done) |
+| `docs/adr/` | Architecture Decision Records | Stable |
+| `docs/pipeline/` | Pipeline status files (per-feature) | Per-feature lifecycle |
+
+## Domain Skills
 
 | Skill | Lines | Description |
 |-------|-------|-------------|
@@ -145,31 +217,34 @@ opencode run "List directory names under ./skills only. Format: SKILLS:name1,nam
 | `docker-production` | 620+ | Multi-stage builds, security hardening, compose patterns, container scanning |
 | `excalidraw-diagram` | 160+ | Visual-argument Excalidraw diagrams with optional Mermaid bootstrap, sectioned JSON generation, semantic palettes, lint checks, and PNG render validation loop |
 
-## Agents (10)
+## Agents (13)
 
 Specialized personas that combine multiple skills for focused tasks:
 
 | Agent | Model | Purpose |
 |-------|-------|---------|
+| `pipeline-orchestrator` | opus | End-to-end feature delivery — routes ideation through ship |
+| `design-explorer` | opus | Parallel competing API/module designs with depth scoring |
 | `software-architect` | opus | System design, architecture decisions, trade-off analysis |
 | `security-auditor` | opus | Security review, vulnerability assessment, OWASP compliance |
 | `pr-reviewer` | opus | Comprehensive code review with severity-labeled feedback |
 | `simplify` | opus | Reuse/quality/efficiency review in parallel, then direct cleanup fixes |
 | `db-architect` | opus | Schema design, query optimization, migration planning |
 | `devops-engineer` | sonnet | CI/CD pipelines, GitHub Actions, deployment automation |
-| `trigger-dev-expert` | sonnet | Trigger.dev tasks/workflows, self-hosted production guidance, queue/retry/idempotency strategy |
+| `trigger-dev-expert` | sonnet | Trigger.dev tasks/workflows, self-hosted production guidance |
 | `qa-engineer` | sonnet | Test strategy, test implementation, coverage analysis |
 | `ba-analyst` | sonnet | Requirements gathering, PRDs, user stories |
+| `issue-triager` | sonnet | GitHub issue triage, classification, severity routing |
 | `git-flow-expert` | sonnet | Branching strategy, git hooks, release automation |
 
 Use agents with `@agent-name` in Claude Code:
 
 ```
+@pipeline-orchestrator Build a full-stack task management app from scratch
 @software-architect Design a notification system for 100k users
 @security-auditor Review this authentication module
 @pr-reviewer Review the changes in this PR
 @simplify Review and simplify my current git diff, then apply fixes
-@trigger-dev-expert Build a self-hosted Trigger.dev deployment and production workflow design
 ```
 
 ## Hooks
@@ -244,6 +319,59 @@ Agentic Skills provides **deep domain expertise and context engineering** — th
 - Production-grade skill guides with decision trees, anti-patterns, and checklists
 - Specialized agents (`@software-architect`, `@security-auditor`, etc.)
 - 7 deterministic command hooks — transcript backup, context injection, lint-on-write, rm -rf guard, error logging
+
+## Workflow Lifecycle
+
+### Starting a New Project
+
+```bash
+# 1. Install agentic-skills into your project
+curl -sSL https://raw.githubusercontent.com/samnetic/agentic-skills/main/install.sh | bash
+
+# 2. Create AGENTS.md symlink for multi-agent compatibility
+ln -s CLAUDE.md AGENTS.md
+
+# 3. Start the delivery pipeline
+# In Claude Code / OpenCode / Codex:
+"Build [your feature description] end to end"
+# Or: "Start the pipeline for [feature]"
+# Or: @pipeline-orchestrator [feature description]
+```
+
+### Feature Development Workflow
+
+```
+1. IDEATE    "Grill this idea: [description]"           → Stress Test Report
+2. SPECIFY   "Write a PRD for [feature]"                → Plan-Ready PRD
+3. PLAN      "Turn this PRD into a plan"                → Vertical-slice plan
+4. ISSUES    "Create issues from this plan"             → GitHub issues (AFK/HITL tagged)
+5. BUILD     (agents auto-execute AFK issues via TDD)   → PRs with tests
+6. REVIEW    "Review these PRs"                         → Approved PRs
+7. SHIP      "Deploy and verify"                        → Production
+```
+
+### Ongoing Maintenance
+
+```bash
+# Audit your agentic setup for contradictions, redundancy, bloat
+"Audit my setup"
+
+# Review architecture decisions
+@software-architect Review the current architecture
+
+# Security scan
+@security-auditor Run a security review
+
+# Simplify code
+@simplify Review and simplify my current git diff
+```
+
+### Context Management
+
+- **50% context usage** — write handover notes to CONTEXT.md
+- **Session restart** — hooks auto-inject git status + CONTEXT.md
+- **Pipeline state** — saved in `docs/pipeline/` for cross-session resumption
+- **Memory** — `.claude/memory/` persists across conversations
 
 ## Contributing
 

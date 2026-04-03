@@ -603,11 +603,18 @@ install_claude() {
     mkdir -p "$base/skills"
     for d in "${SKILL_DIRS[@]}"; do
       name="$(basename "$d")"
-      mkdir -p "$base/skills/$name"
-      cp "$d/SKILL.md" "$base/skills/$name/SKILL.md"
+      local dest="$base/skills/$name"
+      # Skip copy if source and destination resolve to the same path (symlink)
+      if [[ "$(realpath "$d" 2>/dev/null)" == "$(realpath "$dest" 2>/dev/null)" ]]; then
+        MANIFEST_SKILLS+=("$name")
+        skills_installed=$((skills_installed + 1))
+        continue
+      fi
+      mkdir -p "$dest"
+      cp "$d/SKILL.md" "$dest/SKILL.md"
       # Copy reference subdirectories if they exist (e.g., docker-production/references/)
       if [ -d "$d/references" ]; then
-        cp -r "$d/references" "$base/skills/$name/references"
+        cp -r "$d/references" "$dest/references"
       fi
       MANIFEST_SKILLS+=("$name")
       skills_installed=$((skills_installed + 1))
@@ -621,6 +628,12 @@ install_claude() {
     for f in "${AGENT_FILES[@]}"; do
       local agent_name
       agent_name="$(basename "$f")"
+      # Skip copy if source and destination resolve to the same path (symlink)
+      if [[ "$(realpath "$f" 2>/dev/null)" == "$(realpath "$base/agents/$agent_name" 2>/dev/null)" ]]; then
+        MANIFEST_AGENTS+=("$agent_name")
+        agents_installed=$((agents_installed + 1))
+        continue
+      fi
       cp "$f" "$base/agents/"
       MANIFEST_AGENTS+=("$agent_name")
       agents_installed=$((agents_installed + 1))
@@ -634,8 +647,13 @@ install_claude() {
     mkdir -p "$base/hooks/logs" "$base/hooks/backups"
     for hook_script in "$REPO_DIR/.claude/hooks/"*.sh; do
       if [[ -f "$hook_script" ]]; then
-        cp "$hook_script" "$base/hooks/"
-        MANIFEST_HOOK_SCRIPTS+=("$(basename "$hook_script")")
+        local hook_name
+        hook_name="$(basename "$hook_script")"
+        # Skip copy if source and destination resolve to the same path
+        if [[ "$(realpath "$hook_script" 2>/dev/null)" != "$(realpath "$base/hooks/$hook_name" 2>/dev/null)" ]]; then
+          cp "$hook_script" "$base/hooks/"
+        fi
+        MANIFEST_HOOK_SCRIPTS+=("$hook_name")
         hooks_installed=$((hooks_installed + 1))
       fi
     done

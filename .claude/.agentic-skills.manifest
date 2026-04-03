@@ -1,11 +1,11 @@
 {
   "version": "1.3.0",
-  "installed_at": "2026-03-13T11:50:56Z",
-  "source": "/tmp/tmp.GInZtL1TpN",
+  "installed_at": "2026-04-03T18:48:16Z",
+  "source": "/home/sasik/personal/agentic-skills",
   "target": "claude-project",
   "target_path": "/home/sasik/personal/agentic-skills/.claude",
-  "skills": ["agent-browser", "analytics-tracking", "atlassian-cloud-cli", "auth-authz", "bash-scripting", "business-analysis", "claude-code-cli", "cloudflare", "code-review", "code-simplification", "codex-cli", "content-strategy", "copywriting", "council", "data-modeling", "debugging", "devops-cicd", "docker-production", "excalidraw-diagram", "frontend-development", "gemini-cli", "git-workflows", "growth-experiment-lab", "launch-strategy", "linux-server-hardening", "nextjs-react", "nodejs-engineering", "observability", "opencode-cli", "page-cro", "performance-optimization", "positioning-brand-system", "postgres-db", "pricing-strategy", "product-marketing-context", "programmatic-seo", "python-engineering", "qa-testing", "rest-api-design", "schema-markup", "security-analysis", "seo-audit", "software-architecture", "spec-orchestrator", "startup-first-principles", "technical-writing", "trigger-dev-self-hosted", "typescript-engineering"],
-  "agents": ["ba-analyst.md", "db-architect.md", "devops-engineer.md", "git-flow-expert.md", "pr-reviewer.md", "qa-engineer.md", "security-auditor.md", "simplify.md", "software-architect.md", "trigger-dev-expert.md"],
+  "skills": ["agent-browser", "agent-setup-audit", "analytics-tracking", "atlassian-cloud-cli", "auth-authz", "bash-scripting", "business-analysis", "claude-code-cli", "cloudflare", "code-review", "code-simplification", "codex-cli", "content-strategy", "copywriting", "council", "data-modeling", "debugging", "delivery-pipeline", "design-interface", "devops-cicd", "docker-production", "excalidraw-diagram", "frontend-development", "gemini-cli", "git-workflows", "github-triage", "grill-session", "growth-experiment-lab", "launch-strategy", "linux-server-hardening", "nextjs-react", "nodejs-engineering", "observability", "obsidian", "opencode-cli", "page-cro", "performance-optimization", "plan-to-issues", "positioning-brand-system", "postgres-db", "prd-to-plan", "prd-writer", "pricing-strategy", "product-marketing-context", "programmatic-seo", "python-engineering", "qa-testing", "refactor-plan", "rest-api-design", "schema-markup", "security-analysis", "seo-audit", "software-architecture", "spec-orchestrator", "startup-first-principles", "technical-writing", "trigger-dev-self-hosted", "typescript-engineering", "ubiquitous-language"],
+  "agents": ["ba-analyst.md", "db-architect.md", "design-explorer.md", "devops-engineer.md", "git-flow-expert.md", "issue-triager.md", "pipeline-orchestrator.md", "pr-reviewer.md", "qa-engineer.md", "security-auditor.md", "simplify.md", "software-architect.md", "trigger-dev-expert.md"],
   "hooks": true,
   "hook_scripts": ["post-tool-use-failure.sh", "post-tool-use.sh", "pre-compact.sh", "pre-tool-use.sh", "session-start-compact.sh", "session-start.sh", "stop.sh"],
   "plugin_files": []
