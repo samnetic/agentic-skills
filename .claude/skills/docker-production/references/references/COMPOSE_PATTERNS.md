@@ -2,6 +2,20 @@
 
 Production-grade patterns aligned with the Compose Specification (rolling spec), Compose v5 CLI, and Docker Engine v28. All patterns use modern syntax — no `version:` field, `compose.yaml` filename.
 
+## Table of Contents
+
+- [File Conventions](#file-conventions)
+- [Service Template (Production-Hardened)](#service-template-production-hardened)
+- [Network Patterns](#network-patterns)
+- [Volume Patterns](#volume-patterns)
+- [Secrets Patterns](#secrets-patterns)
+- [Healthcheck Patterns by Service](#healthcheck-patterns-by-service)
+- [depends_on Conditions](#depends_on-conditions)
+- [Dev / Prod Split](#dev--prod-split)
+- [Compose Watch (Hot Reload for Dev)](#compose-watch-hot-reload-for-dev)
+- [Reverse Proxy Patterns](#reverse-proxy-patterns)
+- [Common Sidecar Configs (Copy-Paste Ready)](#common-sidecar-configs-copy-paste-ready)
+
 ---
 
 ## File Conventions

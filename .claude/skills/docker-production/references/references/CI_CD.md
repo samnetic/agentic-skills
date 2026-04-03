@@ -2,6 +2,17 @@
 
 Production-grade CI/CD patterns for Docker image builds. Covers GitHub Actions (primary), Docker Bake, multi-platform builds, image scanning gates, caching, and tagging strategies.
 
+## Table of Contents
+
+- [Docker Bake (Build Orchestration)](#docker-bake-build-orchestration)
+- [GitHub Actions — Complete Production Workflow](#github-actions--complete-production-workflow)
+- [Image Tagging Strategy](#image-tagging-strategy)
+- [Caching Strategies](#caching-strategies)
+- [Dockerfile Lint in CI](#dockerfile-lint-in-ci)
+- [Scan Gates (Block Vulnerable Images)](#scan-gates-block-vulnerable-images)
+- [Automated Image Rebuilds (Weekly Security Patch)](#automated-image-rebuilds-weekly-security-patch)
+- [Decision: When to Use What](#decision-when-to-use-what)
+
 ---
 
 ## Docker Bake (Build Orchestration)

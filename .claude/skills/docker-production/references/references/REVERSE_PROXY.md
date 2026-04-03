@@ -2,6 +2,15 @@
 
 Production-grade reverse proxy configurations for Docker Compose. Covers Traefik v3 (recommended for Docker-native auto-discovery) and Caddy (simpler config).
 
+## Table of Contents
+
+- [Decision: Traefik vs Caddy](#decision-traefik-vs-caddy)
+- [Traefik v3 — Complete Production Setup](#traefik-v3--complete-production-setup)
+- [Adding Services Behind Traefik](#adding-services-behind-traefik)
+- [Caddy — Alternative Setup](#caddy--alternative-setup)
+- [IP Allowlisting (Internal Services)](#ip-allowlisting-internal-services)
+- [Middleware Chains (Reusable Combos)](#middleware-chains-reusable-combos)
+
 ---
 
 ## Decision: Traefik vs Caddy

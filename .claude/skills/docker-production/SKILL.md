@@ -1,19 +1,22 @@
 ---
 name: docker-production
 description: >-
-  Enterprise-grade Docker containerization & production operations. Use whenever creating,
-  editing, reviewing, or fixing Dockerfiles, compose.yaml files, .dockerignore files,
-  containerizing any application, setting up CI/CD pipelines for Docker, configuring
-  reverse proxies, hardening Docker hosts, or planning deployment strategies.
-  Covers: multi-stage builds, Docker Hardened Images (DHI), all 13 OWASP Docker rules,
-  CIS Docker Benchmark, Docker Bake (HCL), multi-platform builds, Cosign image signing,
-  SBOM/SLSA attestations, supply chain security, Traefik v3/Caddy reverse proxy with TLS,
-  zero-downtime deployments (docker-rollout, blue-green), Docker socket proxy, graceful
-  shutdown/signal handling, daemon.json hardening, seccomp/AppArmor, auditd, rootless mode,
-  volume backup strategies, Prometheus/Grafana monitoring, structured logging, and
-  production runbooks. Triggers: Docker, Dockerfile, container, compose, containerize,
-  docker-compose, dockerize, image build, compose.yaml, CI/CD, deploy, reverse proxy,
-  Traefik, production, hardening, security scan.
+  Enterprise-grade Docker containerization and production operations. Use when creating,
+  editing, or reviewing Dockerfiles, compose.yaml, .dockerignore, containerizing
+  applications, setting up CI/CD for Docker, configuring reverse proxies, hardening
+  Docker hosts, or planning deployment strategies. Covers multi-stage builds, OWASP
+  Docker rules, CIS Docker Benchmark, Docker Bake, multi-platform builds, Cosign
+  signing, SBOM/SLSA attestations, Traefik v3/Caddy reverse proxy, zero-downtime
+  deployments, daemon.json hardening, seccomp/AppArmor, rootless mode, and production
+  runbooks.
+  Triggers: Docker, Dockerfile, container, compose, containerize, docker-compose,
+  dockerize, image build, compose.yaml, CI/CD, deploy, reverse proxy, Traefik,
+  production, hardening, security scan.
+license: MIT
+compatibility: Requires Docker Engine 24+
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Docker Production Skill
@@ -109,42 +112,7 @@ Always produce **all four** unless the user explicitly requests only one.
 
 ### A. Dockerfile
 
-See full patterns in [references/DOCKERFILE_PATTERNS.md](references/DOCKERFILE_PATTERNS.md).
-
-```dockerfile
-# syntax=docker/dockerfile:1
-
-# ── Build ──────────────────────────────────
-FROM node:22-slim AS build
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN --mount=type=cache,target=/root/.npm \
-    npm ci --ignore-scripts
-COPY . .
-RUN npm run build && npm prune --omit=dev
-
-# ── Production ─────────────────────────────
-FROM node:22-slim AS production
-
-LABEL org.opencontainers.image.source="https://github.com/org/repo"
-LABEL org.opencontainers.image.description="App description"
-
-RUN groupadd -g 10001 app && useradd -u 10001 -g app -s /bin/false -M app
-WORKDIR /app
-
-COPY --from=build --chown=10001:10001 /app/dist ./dist
-COPY --from=build --chown=10001:10001 /app/node_modules ./node_modules
-COPY --from=build --chown=10001:10001 /app/package.json ./
-
-ENV NODE_ENV=production
-USER 10001:10001
-EXPOSE 3000
-
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-  CMD node -e "fetch('http://localhost:3000/health').then(r=>{if(!r.ok)throw r})" || exit 1
-
-CMD ["node", "dist/index.js"]
-```
+See full patterns and language-specific templates in [references/DOCKERFILE_PATTERNS.md](references/DOCKERFILE_PATTERNS.md) and [references/LANGUAGE_STACKS.md](references/LANGUAGE_STACKS.md).
 
 **10 Non-Negotiable Dockerfile Rules:**
 
@@ -203,140 +171,17 @@ htmlcov
 
 ### C. compose.yaml
 
-See full patterns in [references/COMPOSE_PATTERNS.md](references/COMPOSE_PATTERNS.md).
+See full service template, network/volume/secrets patterns, healthcheck examples, and sidecar configs in [references/COMPOSE_PATTERNS.md](references/COMPOSE_PATTERNS.md).
 
-```yaml
-# compose.yaml — NO version field (it is obsolete)
+Every production compose.yaml must include for **each service**: `restart: unless-stopped`, `init: true`, `user: "10001:10001"`, `read_only: true`, `security_opt: [no-new-privileges:true]`, `cap_drop: [ALL]`, `healthcheck:` with `start_interval`, `deploy.resources.limits`, and `logging` with rotation.
 
-services:
-  app:
-    build:
-      context: .
-      target: production
-    image: myapp:${TAG:-latest}
-    restart: unless-stopped
-    init: true                         # tini for proper signal handling
-
-    # ── Security ──
-    user: "10001:10001"
-    read_only: true
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    tmpfs:
-      - /tmp:noexec,nosuid,size=64m
-
-    # ── Networking ──
-    ports:
-      - "127.0.0.1:3000:3000"
-    networks:
-      - frontend
-
-    # ── Health ──
-    healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/health').then(r=>{if(!r.ok)throw r})"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
-      start_interval: 5s              # faster probing during startup (Compose ≥ 2.20.2)
-
-    # ── Resources ──
-    deploy:
-      resources:
-        limits:
-          cpus: "1.0"
-          memory: 512M
-        reservations:
-          cpus: "0.25"
-          memory: 128M
-
-    # ── Dependencies ──
-    depends_on:
-      db:
-        condition: service_healthy
-        restart: true                  # restart app when db restarts (Compose ≥ 2.17)
-
-    # ── Secrets ──
-    secrets:
-      - db_password
-    environment:
-      - NODE_ENV=production
-      - DB_HOST=db
-      - DB_PASSWORD_FILE=/run/secrets/db_password
-
-    # ── Logging ──
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "5"
-        tag: "{{.Name}}"
-
-  db:
-    image: postgres:17-alpine
-    restart: unless-stopped
-    user: "999:999"
-    read_only: true
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    cap_add:
-      - DAC_OVERRIDE
-      - FOWNER
-      - SETGID
-      - SETUID
-    tmpfs:
-      - /tmp:noexec,nosuid,size=64m
-      - /run/postgresql:noexec,nosuid,size=16m
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    networks:
-      - backend
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-      start_interval: 3s
-    secrets:
-      - db_password
-    environment:
-      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
-      POSTGRES_DB: app
-    deploy:
-      resources:
-        limits:
-          cpus: "1.0"
-          memory: 1G
-        reservations:
-          cpus: "0.25"
-          memory: 256M
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "5"
-
-networks:
-  frontend:
-    driver: bridge
-  backend:
-    driver: bridge
-    internal: true                     # isolated — no internet, no host access
-
-volumes:
-  db_data:
-    labels:
-      com.example.description: "PostgreSQL persistent data"
-
-secrets:
-  db_password:
-    file: ./secrets/db_password.txt
-```
+Additional compose rules:
+- No `version:` field (obsolete)
+- File named `compose.yaml` (not `docker-compose.yml`)
+- Ports bound to `127.0.0.1:` unless deliberately public
+- Backend networks `internal: true`
+- Secrets via Docker secrets (`/run/secrets/`), not env vars
+- `depends_on` with `condition: service_healthy`
 
 ### D. Environment Template (.env.example)
 
@@ -402,35 +247,13 @@ POSTGRES_USER=app
 
 **Always emit at the end of every Docker task:**
 
-```bash
-# ── Lint Dockerfile ──
-docker run --rm -i hadolint/hadolint < Dockerfile
-
-# ── Validate compose.yaml ──
-docker compose config --quiet
-
-# ── Build ──
-docker compose build
-
-# ── Scan image for CVEs ──
-trivy image --severity HIGH,CRITICAL myapp:latest
-# Or Grype (Anchore, open source — fast, no Docker Desktop needed):
-grype myapp:latest --fail-on high
-# Or Docker Scout (built into Docker Desktop):
-docker scout cves myapp:latest
-docker scout recommendations myapp:latest
-
-# ── Scan config files for misconfigurations ──
-trivy config .
-
-# ── Test the full stack ──
-docker compose up -d
-docker compose ps          # all services should show "healthy"
-docker compose logs -f     # watch for startup errors
-
-# ── Teardown ──
-docker compose down
-```
+1. **Lint**: `docker run --rm -i hadolint/hadolint < Dockerfile`
+2. **Validate compose**: `docker compose config --quiet`
+3. **Build**: `docker compose build`
+4. **Scan for CVEs**: `trivy image --severity HIGH,CRITICAL myapp:latest` (or `grype` / `docker scout cves`)
+5. **Scan config**: `trivy config .`
+6. **Test stack**: `docker compose up -d && docker compose ps` (all "healthy")
+7. **Teardown**: `docker compose down`
 
 ---
 
@@ -594,34 +417,8 @@ docker compose watch
 
 ## Environment Targets
 
-### Local Development
-- `docker compose watch` for hot-reload
-- Bind-mount source code
-- Relax `read_only` if needed
-- Keep healthchecks and networks (catches issues early)
-- `restart: "no"`
-
-### Single Server Production (Compose on a VM — most common)
-- Full hardening as above
-- **Reverse proxy** (Traefik v3 + Docker socket proxy) → [references/REVERSE_PROXY.md](references/REVERSE_PROXY.md)
-- **TLS termination** with auto Let's Encrypt certificates
-- **Security middlewares**: headers, rate limiting, IP allowlisting
-- Docker secrets for all sensitive values
-- Resource limits based on server capacity
-- **Zero-downtime deploys** with docker-rollout → [references/PRODUCTION_OPS.md](references/PRODUCTION_OPS.md)
-- **Automated volume backups** with retention policy
-- Log rotation on every service + centralized shipping
-- **Host hardening**: daemon.json, seccomp, auditd → [references/HOST_HARDENING.md](references/HOST_HARDENING.md)
-- **CI/CD pipeline**: GitHub Actions + scan gates + signing → [references/CI_CD.md](references/CI_CD.md)
-- **Supply chain**: SBOM + Cosign + provenance → [references/SUPPLY_CHAIN.md](references/SUPPLY_CHAIN.md)
-- **Monitoring**: Prometheus + Grafana + cAdvisor → [references/PRODUCTION_OPS.md](references/PRODUCTION_OPS.md)
-- Weekly automated image rebuilds for base image patches
-- Docker Bench for Security run weekly
-
-### Orchestrator Path (Swarm / Kubernetes)
-- `deploy` section for replicas and rolling updates
-- Replace Docker secrets with K8s Secrets + external vault
-- K8s readiness/liveness probes replace compose healthchecks
-- Network Policies replace `internal: true` networks
-- Pod Security Standards replace cap_drop/read_only
-- Kyverno/OPA for image signing policy enforcement
+| Environment | Key Configuration | References |
+|---|---|---|
+| **Local Dev** | `docker compose watch`, bind-mounts, `restart: "no"`, relax `read_only` | [COMPOSE_PATTERNS.md](references/COMPOSE_PATTERNS.md) |
+| **Single Server** (most common) | Full hardening, reverse proxy + TLS, zero-downtime deploys, backups, monitoring, host hardening, CI/CD + supply chain, weekly rebuilds | [REVERSE_PROXY.md](references/REVERSE_PROXY.md), [PRODUCTION_OPS.md](references/PRODUCTION_OPS.md), [HOST_HARDENING.md](references/HOST_HARDENING.md), [CI_CD.md](references/CI_CD.md), [SUPPLY_CHAIN.md](references/SUPPLY_CHAIN.md) |
+| **Orchestrator** (Swarm/K8s) | `deploy` for replicas, K8s Secrets + vault, readiness/liveness probes, Network Policies, Pod Security Standards, Kyverno/OPA | — |

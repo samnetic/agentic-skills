@@ -2,6 +2,17 @@
 
 Patterns for running Docker Compose in production on a single server: zero-downtime deployments, graceful shutdown, backup strategies, monitoring, Docker socket proxy, and operational runbooks.
 
+## Table of Contents
+
+- [Graceful Shutdown & Signal Handling](#graceful-shutdown--signal-handling)
+- [Zero-Downtime Deployments](#zero-downtime-deployments)
+- [Docker Socket Proxy](#docker-socket-proxy)
+- [Volume Backup Strategies](#volume-backup-strategies)
+- [Monitoring & Observability](#monitoring--observability)
+- [Log Aggregation](#log-aggregation)
+- [Production Runbook](#production-runbook)
+- [Host Hardening Checklist](#host-hardening-checklist)
+
 ---
 
 ## Graceful Shutdown & Signal Handling

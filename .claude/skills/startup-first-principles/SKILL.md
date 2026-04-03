@@ -7,6 +7,10 @@ description: >-
   making build/pivot/kill decisions. Triggers: first principles, startup
   strategy, entrepreneurship, opportunity sizing, thesis, assumption mapping,
   validation plan, pivot decision, founder strategy, product thesis.
+license: MIT
+metadata:
+  author: samnetic
+  version: "1.0"
 ---
 
 # Startup First Principles
@@ -31,9 +35,11 @@ Make strategy decisions from fundamentals instead of trend-following.
 
 ## Progressive Disclosure Map
 
-- Decomposition workflow: [references/first-principles-decomposition.md](references/first-principles-decomposition.md)
-- Evidence and validation design: [references/evidence-and-tests.md](references/evidence-and-tests.md)
-- Decision memo template: [references/strategy-memo-template.md](references/strategy-memo-template.md)
+| Reference | When to read |
+|---|---|
+| [references/first-principles-decomposition.md](references/first-principles-decomposition.md) | Steps 1-2: scoping the decision and decomposing to fundamentals |
+| [references/evidence-and-tests.md](references/evidence-and-tests.md) | Steps 3-4: building the assumption register and planning validation |
+| [references/strategy-memo-template.md](references/strategy-memo-template.md) | Step 5: producing the final decision memo |
 
 Load only the file needed for the current step.
 
@@ -60,6 +66,26 @@ For each assumption, document:
 - Current evidence quality
 - Cost of being wrong
 - Fastest test that can disconfirm it
+
+```yaml
+# Assumption Register — example entry
+assumptions:
+  - id: A1
+    statement: "RevOps managers spend >5 hrs/week on manual data reconciliation"
+    evidence_tier: E1          # E0=opinion, E1=anecdotal, E2=pattern, E3=behavioral, E4=repeated
+    confidence: 0.3
+    cost_if_wrong: high        # low | medium | high | fatal
+    impact_area: value-creation
+    test:
+      type: problem-interview
+      sample_size: 12
+      success_threshold: ">=8/12 confirm >5 hrs AND rate pain >=4/5"
+      failure_threshold: "<5/12 confirm"
+      max_cost: "$0 + 6 hours founder time"
+      deadline: "2026-03-26"
+    status: untested            # untested | in-progress | passed | failed
+    decision_if_fail: "Pivot to adjacent segment (FinOps) or kill workstream"
+```
 
 ### 4) Plan Validation Sequence
 
@@ -97,6 +123,25 @@ Deliver these artifacts:
 - Treating opinions as evidence.
 - Running experiments without predefined decision rules.
 - Continuing after stop criteria have been met.
+
+## Checklist
+
+Use before finalizing any strategic decision.
+
+- [ ] Decision question is stated as a single binary, time-bound question
+- [ ] Decision owner and deadline are named
+- [ ] Success metric and failure metric are defined with numeric thresholds
+- [ ] Problem decomposed into value creation, value capture, and distribution
+- [ ] Hard constraints separated from soft constraints
+- [ ] Dominant bottleneck identified (demand / activation / retention / monetization / delivery)
+- [ ] Assumption register contains at least 3 ranked assumptions
+- [ ] Every top-3 assumption has at least one disconfirming test designed
+- [ ] Each test has pre-defined success threshold, failure threshold, and cost cap
+- [ ] Evidence tier recorded for every assumption (no irreversible decisions on E0-E1)
+- [ ] Validation sequence ordered by cost (cheapest first)
+- [ ] Stop/pivot criteria written before any test begins
+- [ ] Decision memo completed with alternatives considered and next checkpoint date
+- [ ] Hand-off skill identified for the next phase of work
 
 ## Hand-off Guidance
 

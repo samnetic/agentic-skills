@@ -2,6 +2,18 @@
 
 Hardening the Docker host and daemon for production. Covers daemon.json, seccomp, AppArmor, auditd, firewall rules, rootless mode, user namespace remapping, and Docker Bench.
 
+## Table of Contents
+
+- [Production daemon.json](#production-daemonjson)
+- [Seccomp Profiles](#seccomp-profiles)
+- [AppArmor Profiles](#apparmor-profiles)
+- [User Namespace Remapping](#user-namespace-remapping)
+- [Rootless Docker](#rootless-docker)
+- [Auditing with auditd](#auditing-with-auditd)
+- [Firewall Rules](#firewall-rules)
+- [Docker Bench for Security](#docker-bench-for-security)
+- [Complete Host Hardening Checklist](#complete-host-hardening-checklist)
+
 ---
 
 ## Production daemon.json
