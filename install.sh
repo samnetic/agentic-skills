@@ -401,10 +401,46 @@ done < <(find "$REPO_DIR/agents" -maxdepth 1 -name '*.md' -type f | sort)
 SKILL_COUNT=${#SKILL_DIRS[@]}
 AGENT_COUNT=${#AGENT_FILES[@]}
 
+# ── CLI detection ─────────────────────────────────────────────────────────────
+# Detect which coding agent CLIs are installed and pick a smart default.
+
+DETECTED_CLIS=()
+HAS_CLAUDE=false; HAS_OPENCODE=false; HAS_CODEX=false; HAS_CURSOR=false
+
+if command -v claude >/dev/null 2>&1; then
+  HAS_CLAUDE=true; DETECTED_CLIS+=("Claude Code")
+fi
+if command -v opencode >/dev/null 2>&1; then
+  HAS_OPENCODE=true; DETECTED_CLIS+=("OpenCode")
+fi
+if command -v codex >/dev/null 2>&1; then
+  HAS_CODEX=true; DETECTED_CLIS+=("Codex CLI")
+fi
+if command -v cursor >/dev/null 2>&1 || [[ -d ".cursor" ]]; then
+  HAS_CURSOR=true; DETECTED_CLIS+=("Cursor")
+fi
+
+# Pick best default: first detected CLI's project-level target
+DEFAULT_CHOICE=1
+if $HAS_CLAUDE; then
+  DEFAULT_CHOICE=1
+elif $HAS_CODEX; then
+  DEFAULT_CHOICE=6
+elif $HAS_OPENCODE; then
+  DEFAULT_CHOICE=3
+elif $HAS_CURSOR; then
+  DEFAULT_CHOICE=5
+fi
+
 # ── Interactive mode ──────────────────────────────────────────────────────────
 
 if $INTERACTIVE && [[ -t 0 ]]; then
   banner
+
+  if [[ ${#DETECTED_CLIS[@]} -gt 0 ]]; then
+    info "Detected: $(IFS=', '; echo "${DETECTED_CLIS[*]}")"
+    echo ""
+  fi
 
   header "Install to:"
   echo ""
@@ -419,9 +455,9 @@ if $INTERACTIVE && [[ -t 0 ]]; then
   echo "    $(color bold)9.$(color reset) Cross-client — this project    $(color dim).agents/$(color reset)"
   echo "    $(color bold)10.$(color reset) Cross-client — global          $(color dim)~/.agents/$(color reset)"
   echo ""
-  printf "  Select [1]: "
+  printf "  Select [$DEFAULT_CHOICE]: "
   read -r choice
-  choice="${choice:-1}"
+  choice="${choice:-$DEFAULT_CHOICE}"
 
   case "$choice" in
     1) TARGET="claude-project" ;;
