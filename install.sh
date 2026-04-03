@@ -431,17 +431,18 @@ elif $HAS_CURSOR; then
 fi
 
 # When no --flag was given and stdin is not a terminal (piped install),
-# install to ALL detected CLIs. For interactive mode, DEFAULT_TARGET is used
-# only as the menu default — the user picks the actual target.
+# install to ALL detected CLIs using GLOBAL targets. Project-local paths
+# make no sense for piped installs since the cwd is arbitrary.
+# For interactive mode, DEFAULT_TARGET is only the menu default.
 AUTO_TARGETS=()
 if [[ -z "$TARGET" ]] && ! [[ -t 0 ]]; then
-  # Non-interactive: install to every detected CLI
-  $HAS_CLAUDE   && AUTO_TARGETS+=("claude-project")
-  $HAS_CODEX    && AUTO_TARGETS+=("codex-project")
-  $HAS_OPENCODE && AUTO_TARGETS+=("opencode-project")
+  # Non-interactive: install globally to every detected CLI
+  $HAS_CLAUDE   && AUTO_TARGETS+=("claude-global")
+  $HAS_CODEX    && AUTO_TARGETS+=("codex-global")
+  $HAS_OPENCODE && AUTO_TARGETS+=("opencode-global")
   $HAS_CURSOR   && AUTO_TARGETS+=("cursor")
   # Fallback if nothing detected
-  [[ ${#AUTO_TARGETS[@]} -eq 0 ]] && AUTO_TARGETS+=("claude-project")
+  [[ ${#AUTO_TARGETS[@]} -eq 0 ]] && AUTO_TARGETS+=("claude-global")
 fi
 # For single-target paths (interactive or explicit --flag), keep TARGET set
 [[ -z "$TARGET" ]] && [[ ${#AUTO_TARGETS[@]} -eq 0 ]] && TARGET="$DEFAULT_TARGET"
