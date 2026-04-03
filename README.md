@@ -12,10 +12,12 @@ Production-grade reference guides with decision trees, anti-patterns, code examp
 curl -sSL https://raw.githubusercontent.com/samnetic/agentic-skills/main/install.sh | bash
 ```
 
-Or with options:
+The installer **auto-detects** which coding agent CLIs are on your `$PATH` (`claude`, `codex`, `opencode`, `cursor`) and installs to all of them. If nothing is detected, it defaults to Claude Code.
+
+To target a specific platform:
 
 ```bash
-bash <(curl -sSL https://raw.githubusercontent.com/samnetic/agentic-skills/main/install.sh) --claude --force
+bash <(curl -sSL https://raw.githubusercontent.com/samnetic/agentic-skills/main/install.sh) --codex --force
 ```
 
 ### From a Local Clone
@@ -25,60 +27,31 @@ git clone https://github.com/samnetic/agentic-skills.git
 cd your-project && bash /path/to/agentic-skills/install.sh
 ```
 
-### Unified CLI (Recommended)
+### Lifecycle CLI
 
-Use the wrapper for a cleaner lifecycle UX (`install`, `update`, `self-update`, `disable`, `enable`, `status`, `doctor`, `version`, `uninstall`):
+Use the wrapper for `install`, `update`, `self-update`, `disable`, `enable`, `status`, `doctor`, `version`, and `uninstall`:
 
 ```bash
-# Install (example: Claude project)
 bash /path/to/agentic-skills/agentic-skills.sh install --claude --force
-
-# Update based on existing manifest settings
 bash /path/to/agentic-skills/agentic-skills.sh update --all
-
-# Self-update from latest GitHub main, then run update
 bash /path/to/agentic-skills/agentic-skills.sh self-update --all --yes
-
-# Temporarily disable skills (default component)
-bash /path/to/agentic-skills/agentic-skills.sh disable --path .claude
-
-# Re-enable them
-bash /path/to/agentic-skills/agentic-skills.sh enable --path .claude
-
-# Toggle all components (skills + agents + hooks/plugins where supported)
-bash /path/to/agentic-skills/agentic-skills.sh disable --path .opencode --all-components
-bash /path/to/agentic-skills/agentic-skills.sh enable --path .opencode --all-components
-
-# Show what is installed
 bash /path/to/agentic-skills/agentic-skills.sh status
-
-# Validate installation integrity
 bash /path/to/agentic-skills/agentic-skills.sh doctor
-
-# Uninstall
 bash /path/to/agentic-skills/agentic-skills.sh uninstall --path .claude --force
 ```
 
-### Temporary Toggle (Disable/Enable)
+### Disable / Enable
 
-`disable` and `enable` are reversible toggles. By default, they affect `skills` only.
+Reversible toggles. Default: skills only.
 
 ```bash
-# Default: toggle skills only
 bash agentic-skills.sh disable --path .codex
 bash agentic-skills.sh enable --path .codex
 
-# Toggle specific components
-bash agentic-skills.sh disable --path .claude --agents
-bash agentic-skills.sh enable --path .claude --agents
-bash agentic-skills.sh disable --path .opencode --hooks
-bash agentic-skills.sh enable --path .opencode --hooks
-
-# Toggle everything for one target
+# All components for one target
 bash agentic-skills.sh disable --path .claude --all-components
-bash agentic-skills.sh enable --path .claude --all-components
 
-# Toggle everything for all detected installations
+# Everything everywhere
 bash agentic-skills.sh disable --all --all-components
 bash agentic-skills.sh enable --all --all-components
 ```
@@ -87,48 +60,12 @@ Notes:
 - Codex CLI supports skills/agents toggling, but not hooks.
 - Toggle state is stored under `.agentic-skills-disabled/` inside each install target.
 
-### npm / npx Command
-
-If published to npm, users can run the toolkit as a command:
-
-```bash
-# One-off execution without global install
-npx agentic-skills@latest install --claude --force
-
-# Lifecycle commands
-npx agentic-skills@latest status
-npx agentic-skills@latest doctor
-npx agentic-skills@latest update --all
-npx agentic-skills@latest self-update --all --yes
-npx agentic-skills@latest disable --all --all-components
-npx agentic-skills@latest enable --all --all-components
-```
-
-### Homebrew (macOS/Linux)
-
-If the Homebrew tap is available:
-
-```bash
-brew tap samnetic/agentic-skills
-brew install agentic-skills
-agentic-skills version
-
-# Update / remove
-brew upgrade agentic-skills
-brew uninstall agentic-skills
-```
-
 ### Interactive Installer
 
-The installer lets you choose your platform and components:
+Running `bash install.sh` in a terminal shows an interactive menu. The installer detects installed CLIs and sets the default selection accordingly:
 
 ```
-$ bash install.sh
-
-  ╭──────────────────────────────────────╮
-  │  Agentic Skills                      │
-  │  Curated skills · agents · 7 hooks    │
-  ╰──────────────────────────────────────╯
+  ✓ Detected: Codex CLI, Claude Code
 
   Install to:
     1. Claude Code — this project
@@ -139,50 +76,25 @@ $ bash install.sh
     6. Codex CLI — this project
     7. Codex CLI — global
     8. Codex markdown — legacy
+    9. Cross-client — this project
+   10. Cross-client — global
 
-  Components: Skills, Agents, Hooks
+  Select [6]:
 ```
 
-### Non-Interactive
+### Non-Interactive Flags
 
 ```bash
-# Claude Code (current project, everything)
-bash install.sh --claude --force
-
-# Claude Code (global)
-bash install.sh --claude-global --force
-
-# OpenCode (current project, everything)
-bash install.sh --opencode --force
-
-# OpenCode (global)
-bash install.sh --opencode-global --force
-
-# Cursor
-bash install.sh --cursor --force
-
-# Codex CLI (current project)
-bash install.sh --codex --force
-
-# Codex CLI (global CODEX_HOME, default ~/.codex)
-bash install.sh --codex-global --force
-
-# Legacy Codex markdown export
-bash install.sh --codex-md --force
-
-# Skills only, no agents or hooks
-bash install.sh --claude --skills-only --force
-
-# Preview without installing
-bash install.sh --dry-run
-```
-
-### Update Global Claude Installation (One-Liner)
-
-Recommended for existing global installs. `jq` enables automatic hook-configuration merge into existing settings files.
-
-```bash
-command -v jq >/dev/null || { echo "Install jq first: brew install jq (macOS) or sudo apt-get install -y jq (Ubuntu/Debian)"; exit 1; }; curl -sSL https://raw.githubusercontent.com/samnetic/agentic-skills/main/install.sh | bash -s -- --claude-global --force
+bash install.sh --claude --force          # Claude Code (project)
+bash install.sh --claude-global --force   # Claude Code (global)
+bash install.sh --opencode --force        # OpenCode (project)
+bash install.sh --opencode-global --force # OpenCode (global)
+bash install.sh --cursor --force          # Cursor
+bash install.sh --codex --force           # Codex CLI (project)
+bash install.sh --codex-global --force    # Codex CLI (global)
+bash install.sh --codex-md --force        # Legacy codex.md export
+bash install.sh --skills-only --force     # Skills only, no agents/hooks
+bash install.sh --dry-run                 # Preview without writing
 ```
 
 ### Uninstall
@@ -193,44 +105,13 @@ bash uninstall.sh
 
 Removes only what was installed — your custom skills and agents are untouched.
 
-### Test
+### Verify Installation
 
 ```bash
-# Installer + CLI smoke tests
-bash tests/run-all.sh
-
-# Individual suites
-bash tests/smoke-installer.sh
-bash tests/smoke-manager.sh
-bash tests/smoke-clis.sh
+claude -p "List directory names under ./skills only. Format: SKILLS:name1,name2,..."
+codex exec --skip-git-repo-check "List directory names under ./.codex/skills only. Format: SKILLS:name1,name2,..."
+opencode run "List directory names under ./skills only. Format: SKILLS:name1,name2,..."
 ```
-
-### Sync Upstream Skills
-
-```bash
-# Refresh vendored upstream browser automation skill
-npm run skills:sync:agent-browser
-```
-
-### Live CLI Verification
-
-Use these to verify each installed coding agent can access skills in this repo:
-
-```bash
-claude -p "In this repo, list directory names under ./skills only. Return exactly one line in this format: SKILLS:name1,name2,... sorted alphabetically with no spaces."
-
-codex exec --skip-git-repo-check "In this repo, list directory names under ./.codex/skills only. Return exactly one line in this format: SKILLS:name1,name2,... sorted alphabetically with no spaces."
-
-opencode run "In this repo, list directory names under ./skills only. Return exactly one line in this format: SKILLS:name1,name2,... sorted alphabetically with no spaces."
-```
-
-### Alternative: `npx skills`
-
-```bash
-npx skills add samnetic/agentic-skills
-```
-
-Installs skills only (no agents or hooks) into `.claude/skills/` in the current project.
 
 ## Skills
 
@@ -342,23 +223,14 @@ While designed for Claude Code, these skills work with any AI coding assistant t
 | **Codex Legacy** | `--codex-md` | All content concatenated into `codex.md` |
 | **Any LLM** | — | Include skill content in system prompt |
 
-## Maintainer Release Automation
+## Release
 
-Pushing a version tag triggers GitHub Actions to validate, publish npm, create a GitHub release, and update Homebrew formula metadata in the tap repository.
+Pushing a version tag triggers CI to validate and create a GitHub release:
 
 ```bash
-# Example
 git tag v1.3.0
 git push origin v1.3.0
 ```
-
-Required repository secrets:
-- `NPM_TOKEN` for npm publish
-- `HOMEBREW_TAP_GITHUB_TOKEN` for pushing formula updates to the Homebrew tap
-
-Optional repository variables:
-- `HOMEBREW_TAP_REPO` (default: `samnetic/homebrew-agentic-skills`)
-- `HOMEBREW_TAP_BRANCH` (default: `main`)
 
 ## Works With
 
