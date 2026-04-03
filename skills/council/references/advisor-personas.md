@@ -1,7 +1,8 @@
 # Advisor Personas
 
 Five independent advisors, each with a distinct thinking lens. Spawn all five
-in parallel using the Agent tool in a single message. Each advisor receives the
+in parallel using the platform's sub-agent tool in a single message
+(`Agent` in Claude Code, `spawn_agent` in Codex CLI, `task` in OpenCode). Each advisor receives the
 framed question and their persona block below.
 
 ---

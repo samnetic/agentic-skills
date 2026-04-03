@@ -102,15 +102,17 @@ final transcript.
 ### Phase 2: Advisor Convening
 
 1. Read `references/advisor-personas.md`.
-2. Spawn **5 Agent tool calls in a SINGLE message** (parallel execution is
-   critical — advisors must not see each other's responses):
-   - Agent 1: The Contrarian + Decision Brief
-   - Agent 2: The First Principles Thinker + Decision Brief
-   - Agent 3: The Expansionist + Decision Brief
-   - Agent 4: The Outsider + Decision Brief
-   - Agent 5: The Executor + Decision Brief
-3. Each agent is instructed to respond in 150–300 words, take a clear position,
-   no hedging. Include their persona prompt from the reference file.
+2. Spawn **5 parallel sub-agents in a SINGLE message** (parallel execution is
+   critical — advisors must not see each other's responses). Use the platform's
+   sub-agent tool (`Agent` in Claude Code, `spawn_agent` in Codex CLI,
+   `task` in OpenCode):
+   - Sub-agent 1: The Contrarian + Decision Brief
+   - Sub-agent 2: The First Principles Thinker + Decision Brief
+   - Sub-agent 3: The Expansionist + Decision Brief
+   - Sub-agent 4: The Outsider + Decision Brief
+   - Sub-agent 5: The Executor + Decision Brief
+3. Each sub-agent is instructed to respond in 150–300 words, take a clear
+   position, no hedging. Include their persona prompt from the reference file.
 4. Collect all 5 responses.
 
 **Critical:** All 5 must be spawned in one message. Sequential spawning allows
@@ -124,7 +126,7 @@ later agents to be influenced by earlier results, destroying independence.
 2. Strip any self-identifying language from responses (e.g., remove "As The
    Contrarian..." if present, replace with "Response [letter]:").
 3. Read `references/reviewer-briefing.md`.
-4. Spawn **5 Agent tool calls in a SINGLE message** (parallel). Each reviewer
+4. Spawn **5 parallel sub-agents in a SINGLE message**. Each reviewer
    receives:
    - All 5 anonymized responses (A–E)
    - The three review questions from the briefing
