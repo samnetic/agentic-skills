@@ -370,9 +370,6 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# Default target if none specified via flags
-[[ -z "$TARGET" ]] && TARGET="claude-project"
-
 # ── Validate source repo ─────────────────────────────────────────────────────
 
 if [[ ! -d "$REPO_DIR/skills" ]]; then
@@ -422,15 +419,32 @@ fi
 
 # Pick best default: first detected CLI's project-level target
 DEFAULT_CHOICE=1
+DEFAULT_TARGET="claude-project"
 if $HAS_CLAUDE; then
-  DEFAULT_CHOICE=1
+  DEFAULT_CHOICE=1;  DEFAULT_TARGET="claude-project"
 elif $HAS_CODEX; then
-  DEFAULT_CHOICE=6
+  DEFAULT_CHOICE=6;  DEFAULT_TARGET="codex-project"
 elif $HAS_OPENCODE; then
-  DEFAULT_CHOICE=3
+  DEFAULT_CHOICE=3;  DEFAULT_TARGET="opencode-project"
 elif $HAS_CURSOR; then
-  DEFAULT_CHOICE=5
+  DEFAULT_CHOICE=5;  DEFAULT_TARGET="cursor"
 fi
+
+# When no --flag was given and stdin is not a terminal (piped install),
+# install to ALL detected CLIs. For interactive mode, DEFAULT_TARGET is used
+# only as the menu default — the user picks the actual target.
+AUTO_TARGETS=()
+if [[ -z "$TARGET" ]] && ! [[ -t 0 ]]; then
+  # Non-interactive: install to every detected CLI
+  $HAS_CLAUDE   && AUTO_TARGETS+=("claude-project")
+  $HAS_CODEX    && AUTO_TARGETS+=("codex-project")
+  $HAS_OPENCODE && AUTO_TARGETS+=("opencode-project")
+  $HAS_CURSOR   && AUTO_TARGETS+=("cursor")
+  # Fallback if nothing detected
+  [[ ${#AUTO_TARGETS[@]} -eq 0 ]] && AUTO_TARGETS+=("claude-project")
+fi
+# For single-target paths (interactive or explicit --flag), keep TARGET set
+[[ -z "$TARGET" ]] && [[ ${#AUTO_TARGETS[@]} -eq 0 ]] && TARGET="$DEFAULT_TARGET"
 
 # ── Interactive mode ──────────────────────────────────────────────────────────
 
@@ -492,48 +506,23 @@ fi
 
 # ── Resolve target path ──────────────────────────────────────────────────────
 
-case "$TARGET" in
-  claude-project)
-    TARGET_BASE=".claude"
-    TARGET_LABEL="Claude Code (project)"
-    ;;
-  claude-global)
-    TARGET_BASE="$HOME/.claude"
-    TARGET_LABEL="Claude Code (global)"
-    ;;
-  opencode-project)
-    TARGET_BASE=".opencode"
-    TARGET_LABEL="OpenCode (project)"
-    ;;
-  opencode-global)
-    TARGET_BASE="$HOME/.config/opencode"
-    TARGET_LABEL="OpenCode (global)"
-    ;;
-  cursor)
-    TARGET_BASE=".cursor/rules"
-    TARGET_LABEL="Cursor (project)"
-    ;;
-  codex-project)
-    TARGET_BASE=".codex"
-    TARGET_LABEL="Codex CLI (project)"
-    ;;
-  codex-global)
-    TARGET_BASE="$CODEX_HOME_DIR"
-    TARGET_LABEL="Codex CLI (global)"
-    ;;
-  codex)
-    TARGET_BASE="."
-    TARGET_LABEL="Codex markdown export (legacy)"
-    ;;
-  agents-dir-project)
-    TARGET_BASE=".agents"
-    TARGET_LABEL="Cross-client interop (project)"
-    ;;
-  agents-dir-global)
-    TARGET_BASE="$HOME/.agents"
-    TARGET_LABEL="Cross-client interop (global)"
-    ;;
-esac
+resolve_target() {
+  local t="$1"
+  case "$t" in
+    claude-project)    TARGET_BASE=".claude";             TARGET_LABEL="Claude Code (project)" ;;
+    claude-global)     TARGET_BASE="$HOME/.claude";       TARGET_LABEL="Claude Code (global)" ;;
+    opencode-project)  TARGET_BASE=".opencode";           TARGET_LABEL="OpenCode (project)" ;;
+    opencode-global)   TARGET_BASE="$HOME/.config/opencode"; TARGET_LABEL="OpenCode (global)" ;;
+    cursor)            TARGET_BASE=".cursor/rules";       TARGET_LABEL="Cursor (project)" ;;
+    codex-project)     TARGET_BASE=".codex";              TARGET_LABEL="Codex CLI (project)" ;;
+    codex-global)      TARGET_BASE="$CODEX_HOME_DIR";     TARGET_LABEL="Codex CLI (global)" ;;
+    codex)             TARGET_BASE=".";                   TARGET_LABEL="Codex markdown export (legacy)" ;;
+    agents-dir-project) TARGET_BASE=".agents";            TARGET_LABEL="Cross-client interop (project)" ;;
+    agents-dir-global) TARGET_BASE="$HOME/.agents";       TARGET_LABEL="Cross-client interop (global)" ;;
+  esac
+}
+
+resolve_target "$TARGET"
 
 # ── Dry-run preamble ─────────────────────────────────────────────────────────
 
@@ -1002,29 +991,47 @@ EOF
 
 # ── Dispatch ──────────────────────────────────────────────────────────────────
 
-case "$TARGET" in
-  claude-project) install_claude "$TARGET_BASE" ;;
-  claude-global)  install_claude "$TARGET_BASE" ;;
-  opencode-project) install_opencode "$TARGET_BASE" ;;
-  opencode-global)  install_opencode "$TARGET_BASE" ;;
-  cursor)         install_cursor "$TARGET_BASE" ;;
-  codex-project)  install_codex_registry "$TARGET_BASE" ;;
-  codex-global)   install_codex_registry "$TARGET_BASE" ;;
-  codex)          install_codex_markdown ;;
-  agents-dir-project) install_agents_dir "$TARGET_BASE" ;;
-  agents-dir-global)  install_agents_dir "$TARGET_BASE" ;;
-esac
+dispatch_install() {
+  local t="$1"
+  resolve_target "$t"
+  MANIFEST_SKILLS=(); MANIFEST_AGENTS=()
+  case "$t" in
+    claude-project|claude-global) install_claude "$TARGET_BASE" ;;
+    opencode-project|opencode-global) install_opencode "$TARGET_BASE" ;;
+    cursor)         install_cursor "$TARGET_BASE" ;;
+    codex-project|codex-global) install_codex_registry "$TARGET_BASE" ;;
+    codex)          install_codex_markdown ;;
+    agents-dir-project|agents-dir-global) install_agents_dir "$TARGET_BASE" ;;
+  esac
+}
 
-# ── Done ──────────────────────────────────────────────────────────────────────
+done_message() {
+  local t="$1"
+  case "$t" in
+    claude-*)  info "Done! Restart Claude Code to activate." ;;
+    opencode-*) info "Done! Restart OpenCode to activate." ;;
+    cursor)    info "Done! Restart Cursor to activate." ;;
+    codex-project|codex-global) info "Done! Restart Codex to activate." ;;
+    codex)     info "Done! codex.md is ready." ;;
+    agents-dir-*) info "Done! Skills installed to .agents/ (cross-client)." ;;
+  esac
+}
 
-echo ""
-case "$TARGET" in
-  claude-*) info "Done! Restart Claude Code to activate." ;;
-  opencode-*) info "Done! Restart OpenCode to activate." ;;
-  cursor)   info "Done! Restart Cursor to activate." ;;
-  codex-project|codex-global) info "Done! Restart Codex to activate." ;;
-  codex)    info "Done! codex.md is ready." ;;
-  agents-dir-*) info "Done! Skills installed to .agents/ (cross-client)." ;;
-esac
+if [[ ${#AUTO_TARGETS[@]} -gt 0 ]]; then
+  # Multi-target: install to every detected CLI
+  for auto_target in "${AUTO_TARGETS[@]}"; do
+    dispatch_install "$auto_target"
+  done
+  echo ""
+  for auto_target in "${AUTO_TARGETS[@]}"; do
+    done_message "$auto_target"
+  done
+else
+  # Single target (interactive selection or explicit --flag)
+  dispatch_install "$TARGET"
+  echo ""
+  done_message "$TARGET"
+fi
+
 echo "  To uninstall: $(color dim)bash $REPO_DIR/uninstall.sh$(color reset)"
 echo ""
