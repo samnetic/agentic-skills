@@ -703,10 +703,16 @@ install_opencode() {
     mkdir -p "$base/skills"
     for d in "${SKILL_DIRS[@]}"; do
       name="$(basename "$d")"
-      mkdir -p "$base/skills/$name"
-      cp "$d/SKILL.md" "$base/skills/$name/SKILL.md"
+      local dest="$base/skills/$name"
+      mkdir -p "$dest"
+      if [[ "$(realpath "$d" 2>/dev/null)" == "$(realpath "$dest" 2>/dev/null)" ]]; then
+        MANIFEST_SKILLS+=("$name")
+        skills_installed=$((skills_installed + 1))
+        continue
+      fi
+      cp "$d/SKILL.md" "$dest/SKILL.md"
       if [[ -d "$d/references" ]]; then
-        cp -r "$d/references" "$base/skills/$name/references"
+        cp -r "$d/references" "$dest/references"
       fi
       MANIFEST_SKILLS+=("$name")
       skills_installed=$((skills_installed + 1))
@@ -720,7 +726,13 @@ install_opencode() {
     for f in "${AGENT_FILES[@]}"; do
       local agent_name
       agent_name="$(basename "$f")"
-      write_opencode_agent "$f" "$base/agents/$agent_name"
+      local dest="$base/agents/$agent_name"
+      if [[ "$(realpath "$f" 2>/dev/null)" == "$(realpath "$dest" 2>/dev/null)" ]]; then
+        MANIFEST_AGENTS+=("$agent_name")
+        agents_installed=$((agents_installed + 1))
+        continue
+      fi
+      write_opencode_agent "$f" "$dest"
       MANIFEST_AGENTS+=("$agent_name")
       agents_installed=$((agents_installed + 1))
     done
@@ -733,10 +745,17 @@ install_opencode() {
     local plugin_dst_dir="$base/plugins"
     if [[ -f "$plugin_src" ]]; then
       mkdir -p "$plugin_dst_dir"
-      cp "$plugin_src" "$plugin_dst_dir/"
-      MANIFEST_PLUGIN_FILES+=("agentic-skills-hooks.js")
-      MANIFEST_HOOKS=true
-      info "OpenCode hook bridge plugin installed"
+      local plugin_dst="$plugin_dst_dir/agentic-skills-hooks.js"
+      if [[ "$(realpath "$plugin_src" 2>/dev/null)" == "$(realpath "$plugin_dst" 2>/dev/null)" ]]; then
+        MANIFEST_PLUGIN_FILES+=("agentic-skills-hooks.js")
+        MANIFEST_HOOKS=true
+        info "OpenCode hook bridge plugin installed"
+      else
+        cp "$plugin_src" "$plugin_dst_dir/"
+        MANIFEST_PLUGIN_FILES+=("agentic-skills-hooks.js")
+        MANIFEST_HOOKS=true
+        info "OpenCode hook bridge plugin installed"
+      fi
     else
       warn "OpenCode hook bridge plugin missing — skipped"
     fi
@@ -810,10 +829,16 @@ install_codex_registry() {
     mkdir -p "$base/skills"
     for d in "${SKILL_DIRS[@]}"; do
       name="$(basename "$d")"
-      mkdir -p "$base/skills/$name"
-      write_codex_skill "$d/SKILL.md" "$base/skills/$name/SKILL.md" "$name"
+      local dest="$base/skills/$name"
+      mkdir -p "$dest"
+      if [[ "$(realpath "$d" 2>/dev/null)" == "$(realpath "$dest" 2>/dev/null)" ]]; then
+        MANIFEST_SKILLS+=("$name")
+        skills_installed=$((skills_installed + 1))
+        continue
+      fi
+      write_codex_skill "$d/SKILL.md" "$dest/SKILL.md" "$name"
       if [[ -d "$d/references" ]]; then
-        cp -r "$d/references" "$base/skills/$name/references"
+        cp -r "$d/references" "$dest/references"
       fi
       MANIFEST_SKILLS+=("$name")
       skills_installed=$((skills_installed + 1))
@@ -826,7 +851,13 @@ install_codex_registry() {
     for f in "${AGENT_FILES[@]}"; do
       local agent_name
       agent_name="$(basename "$f")"
-      cp "$f" "$base/agents/$agent_name"
+      local dest="$base/agents/$agent_name"
+      if [[ "$(realpath "$f" 2>/dev/null)" == "$(realpath "$dest" 2>/dev/null)" ]]; then
+        MANIFEST_AGENTS+=("$agent_name")
+        agents_installed=$((agents_installed + 1))
+        continue
+      fi
+      cp "$f" "$dest"
       MANIFEST_AGENTS+=("$agent_name")
       agents_installed=$((agents_installed + 1))
     done
